@@ -1,0 +1,638 @@
+[
+    {
+        "id": 123,
+        "title": "Summer Music Festival",
+        "description": "An exhilarating summer festival featuring renowned artists and local talents.",
+        "price": 2500,
+        "organizerId": 101,
+        "performerId": 501,
+        "venueId": 301,
+        "startDateTime": "2024-09-30T19:00:00",
+        "endDateTime": "2024-09-30T22:00:00",
+        "status": 1,
+        "createdOn": "2024-09-15T19:00:00",
+        "modifiedOn": null,
+        "offers": [
+            {
+                "offerId": 1,
+                "type": 0,
+                "discount": 20,
+                "quantity": 100,
+                "groupSize": 0
+            }
+        ],
+        "eventDocuments": [
+            {
+                "eventDocumentId": 123,
+                "eventDocumentType": 0,
+                "title": "Official Event Banner",
+                "filePath": "https://example.com/images/banner.jpg",
+                "fileType": "jpg"
+            }
+        ],
+        "eventPriceCategories": [
+            {
+                "eventPriceCategoryId": 12345,
+                "eventPriceCategoryName": "VIP",
+                "eventPriceCategoryPrice": 300,
+                "eventPriceCategoryCapacity": 50
+            }
+        ],
+        "venue": {
+            "name": "Talkatora Stadium",
+            "maxCapacity": 500,
+            "description": "An indoor stadium known for its excellent acoustics and atmosphere.",
+            "addressLine1": "Talkatora Garden",
+            "city": 1,
+            "state": 0,
+            "country": 0
+        },
+        "performer": {
+            "name": "Diljit Doshanj",
+            "bio": "A celebrated artist known for energetic performances."
+        }
+    },
+    {
+        "id": 124,
+        "title": "Winter Wonderland",
+        "description": "A magical winter event with ice sculptures, food stalls, and entertainment.",
+        "price": 1800,
+        "organizerId": 102,
+        "performerId": 502,
+        "venueId": 302,
+        "startDateTime": "2024-12-15T18:00:00",
+        "endDateTime": "2024-12-15T23:00:00",
+        "status": 1,
+        "createdOn": "2024-09-16T19:00:00",
+        "modifiedOn": null,
+        "offers": [
+            {
+                "offerId": 2,
+                "type": 1,
+                "discount": 10,
+                "quantity": 200,
+                "groupSize": 4
+            }
+        ],
+        "eventDocuments": [
+            {
+                "eventDocumentId": 124,
+                "eventDocumentType": 1,
+                "title": "Winter Promo Poster",
+                "filePath": "https://example.com/images/winter.jpg",
+                "fileType": "png"
+            }
+        ],
+        "eventPriceCategories": [
+            {
+                "eventPriceCategoryId": 12346,
+                "eventPriceCategoryName": "Standard",
+                "eventPriceCategoryPrice": 100,
+                "eventPriceCategoryCapacity": 300
+            }
+        ],
+        "venue": {
+            "name": "City Park",
+            "maxCapacity": 1000,
+            "description": "A beautiful park perfect for outdoor winter events.",
+            "addressLine1": "Central Avenue",
+            "city": 2,
+            "state": 0,
+            "country": 0
+        },
+        "performer": {
+            "name": "The Snow Performers",
+            "bio": "A group of artists specializing in winter-themed performances."
+        }
+    },
+    {
+        "id": 126,
+        "title": "Autumn Harvest Festival",
+        "description": "Celebrate the fall season with food stalls, music, and harvest-themed activities.",
+        "price": 1500,
+        "organizerId": 104,
+        "performerId": 504,
+        "venueId": 304,
+        "startDateTime": "2024-11-05T12:00:00",
+        "endDateTime": "2024-11-05T20:00:00",
+        "status": 1,
+        "createdOn": "2024-09-18T19:00:00",
+        "modifiedOn": null,
+        "offers": [
+            {
+                "offerId": 4,
+                "type": 1,
+                "discount": 25,
+                "quantity": 150,
+                "groupSize": 6
+            }
+        ],
+        "eventDocuments": [
+            {
+                "eventDocumentId": 126,
+                "eventDocumentType": 1,
+                "title": "Autumn Festival Banner",
+                "filePath": "https://example.com/images/autumn.jpg",
+                "fileType": "jpg"
+            }
+        ],
+        "eventPriceCategories": [
+            {
+                "eventPriceCategoryId": 12348,
+                "eventPriceCategoryName": "General Admission",
+                "eventPriceCategoryPrice": 120,
+                "eventPriceCategoryCapacity": 300
+            }
+        ],
+        "venue": {
+            "name": "Riverside Park",
+            "maxCapacity": 1000,
+            "description": "A riverside venue perfect for festivals.",
+            "addressLine1": "River Road",
+            "city": 4,
+            "state": 0,
+            "country": 0
+        },
+        "performer": {
+            "name": "Harvest Band",
+            "bio": "An acoustic band known for their fall-themed performances."
+        }
+    },
+    {
+        "id": 127,
+        "title": "Tech Expo 2024",
+        "description": "Showcasing the latest innovations in technology, with keynotes from industry leaders.",
+        "price": 5000,
+        "organizerId": 105,
+        "performerId": 505,
+        "venueId": 305,
+        "startDateTime": "2024-10-20T09:00:00",
+        "endDateTime": "2024-10-20T18:00:00",
+        "status": 1,
+        "createdOn": "2024-09-19T19:00:00",
+        "modifiedOn": null,
+        "offers": [
+            {
+                "offerId": 5,
+                "type": 0,
+                "discount": 15,
+                "quantity": 300,
+                "groupSize": 10
+            }
+        ],
+        "eventDocuments": [
+            {
+                "eventDocumentId": 127,
+                "eventDocumentType": 0,
+                "title": "Tech Expo Brochure",
+                "filePath": "https://example.com/images/tech.jpg",
+                "fileType": "pdf"
+            }
+        ],
+        "eventPriceCategories": [
+            {
+                "eventPriceCategoryId": 12349,
+                "eventPriceCategoryName": "Early Bird",
+                "eventPriceCategoryPrice": 4500,
+                "eventPriceCategoryCapacity": 200
+            }
+        ],
+        "venue": {
+            "name": "Tech Convention Center",
+            "maxCapacity": 3000,
+            "description": "A state-of-the-art venue designed for tech events.",
+            "addressLine1": "Innovation Street",
+            "city": 5,
+            "state": 0,
+            "country": 0
+        },
+        "performer": {
+            "name": "Tech Pioneers",
+            "bio": "A group of tech leaders showcasing their latest products."
+        }
+    },
+    {
+        "id": 131,
+        "title": "Film Festival 2024",
+        "description": "A week-long festival featuring indie films, documentaries, and international cinema.",
+        "price": 3500,
+        "organizerId": 109,
+        "performerId": 509,
+        "venueId": 309,
+        "startDateTime": "2024-11-01T10:00:00",
+        "endDateTime": "2024-11-08T22:00:00",
+        "status": 1,
+        "createdOn": "2024-09-23T19:00:00",
+        "modifiedOn": null,
+        "offers": [
+            {
+                "offerId": 9,
+                "type": 1,
+                "discount": 15,
+                "quantity": 100,
+                "groupSize": 5
+            }
+        ],
+        "eventDocuments": [
+            {
+                "eventDocumentId": 131,
+                "eventDocumentType": 0,
+                "title": "Film Festival Poster",
+                "filePath": "https://example.com/images/film.jpg",
+                "fileType": "jpg"
+            }
+        ],
+        "eventPriceCategories": [
+            {
+                "eventPriceCategoryId": 12353,
+                "eventPriceCategoryName": "Full Access Pass",
+                "eventPriceCategoryPrice": 3200,
+                "eventPriceCategoryCapacity": 500
+            }
+        ],
+        "venue": {
+            "name": "City Cinema",
+            "maxCapacity": 1500,
+            "description": "A modern cinema complex with multiple screening rooms.",
+            "addressLine1": "Cinema Road",
+            "city": 9,
+            "state": 0,
+            "country": 0
+        },
+        "performer": {
+            "name": "Film Directors Panel",
+            "bio": "A panel of indie film directors discussing their latest projects."
+        }
+    },
+    {
+        "id": 135,
+        "title": "Charity 5K Run",
+        "description": "A 5K run to raise funds for local animal shelters.",
+        "price": 300,
+        "organizerId": 113,
+        "performerId": 513,
+        "venueId": 313,
+        "startDateTime": "2024-10-05T08:00:00",
+        "endDateTime": "2024-10-05T11:00:00",
+        "status": 1,
+        "createdOn": "2024-09-27T19:00:00",
+        "modifiedOn": null,
+        "offers": [
+            {
+                "offerId": 13,
+                "type": 0,
+                "discount": 5,
+                "quantity": 200,
+                "groupSize": 5
+            }
+        ],
+        "eventDocuments": [
+            {
+                "eventDocumentId": 135,
+                "eventDocumentType": 1,
+                "title": "Run Route Map",
+                "filePath": "https://example.com/maps/5k_run.jpg",
+                "fileType": "jpg"
+            }
+        ],
+        "eventPriceCategories": [
+            {
+                "eventPriceCategoryId": 12357,
+                "eventPriceCategoryName": "Standard Registration",
+                "eventPriceCategoryPrice": 300,
+                "eventPriceCategoryCapacity": 1000
+            }
+        ],
+        "venue": {
+            "name": "Riverfront Park",
+            "maxCapacity": 2000,
+            "description": "A beautiful park along the river, perfect for charity runs.",
+            "addressLine1": "Riverside Drive",
+            "city": 13,
+            "state": 0,
+            "country": 0
+        },
+        "performer": {
+            "name": "Local DJ",
+            "bio": "A popular DJ spinning music at the event start and finish lines."
+        }
+    },
+    {
+        "id": 136,
+        "title": "Outdoor Yoga Retreat",
+        "description": "A weekend retreat focused on yoga, meditation, and relaxation in nature.",
+        "price": 800,
+        "organizerId": 111,
+        "performerId": 511,
+        "venueId": 311,
+        "startDateTime": "2024-11-05T08:00:00",
+        "endDateTime": "2024-11-07T17:00:00",
+        "status": 1,
+        "createdOn": "2024-09-15T19:00:00",
+        "modifiedOn": null,
+        "offers": [
+            {
+                "offerId": 11,
+                "type": 0,
+                "discount": 15,
+                "quantity": 20,
+                "groupSize": 2
+            }
+        ],
+        "eventDocuments": [
+            {
+                "eventDocumentId": 136,
+                "eventDocumentType": 1,
+                "title": "Retreat Brochure",
+                "filePath": "https://example.com/files/outdoor_yoga_retreat.pdf",
+                "fileType": "pdf"
+            }
+        ],
+        "eventPriceCategories": [
+            {
+                "eventPriceCategoryId": 12355,
+                "eventPriceCategoryName": "Standard Package",
+                "eventPriceCategoryPrice": 800,
+                "eventPriceCategoryCapacity": 30
+            }
+        ],
+        "venue": {
+            "name": "Forest Retreat Center",
+            "maxCapacity": 50,
+            "description": "A serene location surrounded by nature, perfect for relaxation and yoga.",
+            "addressLine1": "Wilderness Road",
+            "city": 11,
+            "state": 0,
+            "country": 0
+        },
+        "performer": {
+            "name": "Yogi Sara",
+            "bio": "A certified yoga instructor with years of experience in holistic wellness."
+        }
+    },
+    {
+        "id": 137,
+        "title": "Gourmet Food Tour",
+        "description": "A guided tour of the best gourmet restaurants in the city.",
+        "price": 1500,
+        "organizerId": 115,
+        "performerId": 515,
+        "venueId": 315,
+        "startDateTime": "2024-11-15T10:00:00",
+        "endDateTime": "2024-11-15T18:00:00",
+        "status": 1,
+        "createdOn": "2024-09-29T19:00:00",
+        "modifiedOn": null,
+        "offers": [
+            {
+                "offerId": 15,
+                "type": 1,
+                "discount": 10,
+                "quantity": 40,
+                "groupSize": 2
+            }
+        ],
+        "eventDocuments": [
+            {
+                "eventDocumentId": 137,
+                "eventDocumentType": 0,
+                "title": "Tour Itinerary",
+                "filePath": "https://example.com/files/gourmet_tour.pdf",
+                "fileType": "pdf"
+            }
+        ],
+        "eventPriceCategories": [
+            {
+                "eventPriceCategoryId": 12359,
+                "eventPriceCategoryName": "Deluxe Package",
+                "eventPriceCategoryPrice": 1600,
+                "eventPriceCategoryCapacity": 30
+            }
+        ],
+        "venue": {
+            "name": "Various Locations",
+            "maxCapacity": 0,
+            "description": "A tour visiting top gourmet restaurants across the city.",
+            "addressLine1": "",
+            "city": 15,
+            "state": 0,
+            "country": 0
+        },
+        "performer": {
+            "name": "Food Critic Jane",
+            "bio": "A renowned food critic known for her culinary expertise."
+        }
+    },
+    {
+        "id": 138,
+        "title": "Art Workshop",
+        "description": "A workshop for aspiring artists to learn new techniques and create their own masterpieces.",
+        "price": 400,
+        "organizerId": 116,
+        "performerId": 516,
+        "venueId": 316,
+        "startDateTime": "2024-10-12T09:00:00",
+        "endDateTime": "2024-10-12T16:00:00",
+        "status": 1,
+        "createdOn": "2024-09-30T19:00:00",
+        "modifiedOn": null,
+        "offers": [
+            {
+                "offerId": 16,
+                "type": 0,
+                "discount": 20,
+                "quantity": 30,
+                "groupSize": 2
+            }
+        ],
+        "eventDocuments": [
+            {
+                "eventDocumentId": 138,
+                "eventDocumentType": 1,
+                "title": "Workshop Schedule",
+                "filePath": "https://example.com/files/art_workshop.pdf",
+                "fileType": "pdf"
+            }
+        ],
+        "eventPriceCategories": [
+            {
+                "eventPriceCategoryId": 12360,
+                "eventPriceCategoryName": "Standard Enrollment",
+                "eventPriceCategoryPrice": 400,
+                "eventPriceCategoryCapacity": 50
+            }
+        ],
+        "venue": {
+            "name": "Creative Studio",
+            "maxCapacity": 100,
+            "description": "A spacious studio with all the materials needed for art classes.",
+            "addressLine1": "Artist Lane",
+            "city": 16,
+            "state": 0,
+            "country": 0
+        },
+        "performer": {
+            "name": "Artist Max",
+            "bio": "A professional artist with experience in various painting techniques."
+        }
+    },
+    {
+        "id": 142,
+        "title": "Classic Car Show",
+        "description": "A showcase of vintage and classic cars, featuring rare models and collector's items.",
+        "price": 400,
+        "organizerId": 120,
+        "performerId": 520,
+        "venueId": 320,
+        "startDateTime": "2024-12-01T10:00:00",
+        "endDateTime": "2024-12-01T16:00:00",
+        "status": 1,
+        "createdOn": "2024-10-04T19:00:00",
+        "modifiedOn": null,
+        "offers": [
+            {
+                "offerId": 20,
+                "type": 0,
+                "discount": 10,
+                "quantity": 40,
+                "groupSize": 2
+            }
+        ],
+        "eventDocuments": [
+            {
+                "eventDocumentId": 142,
+                "eventDocumentType": 1,
+                "title": "Show Brochure",
+                "filePath": "https://example.com/files/classic_car_show.pdf",
+                "fileType": "pdf"
+            }
+        ],
+        "eventPriceCategories": [
+            {
+                "eventPriceCategoryId": 12364,
+                "eventPriceCategoryName": "VIP Access",
+                "eventPriceCategoryPrice": 800,
+                "eventPriceCategoryCapacity": 50
+            }
+        ],
+        "venue": {
+            "name": "Grand Exhibition Hall",
+            "maxCapacity": 400,
+            "description": "A spacious hall for displaying classic and vintage vehicles.",
+            "addressLine1": "Car Collector's Lane",
+            "city": 20,
+            "state": 0,
+            "country": 0
+        },
+        "performer": {
+            "name": "Car Enthusiast Mike",
+            "bio": "A classic car aficionado with extensive knowledge of vintage vehicles."
+        }
+    },
+    {
+        "id": 143,
+        "title": "Cooking Masterclass",
+        "description": "A hands-on cooking masterclass with renowned chefs teaching gourmet recipes.",
+        "price": 500,
+        "organizerId": 121,
+        "performerId": 521,
+        "venueId": 321,
+        "startDateTime": "2024-11-20T10:00:00",
+        "endDateTime": "2024-11-20T15:00:00",
+        "status": 1,
+        "createdOn": "2024-10-05T19:00:00",
+        "modifiedOn": null,
+        "offers": [
+            {
+                "offerId": 21,
+                "type": 0,
+                "discount": 15,
+                "quantity": 30,
+                "groupSize": 2
+            }
+        ],
+        "eventDocuments": [
+            {
+                "eventDocumentId": 143,
+                "eventDocumentType": 1,
+                "title": "Masterclass Guide",
+                "filePath": "https://example.com/files/cooking_masterclass.pdf",
+                "fileType": "pdf"
+            }
+        ],
+        "eventPriceCategories": [
+            {
+                "eventPriceCategoryId": 12365,
+                "eventPriceCategoryName": "Standard Entry",
+                "eventPriceCategoryPrice": 500,
+                "eventPriceCategoryCapacity": 40
+            }
+        ],
+        "venue": {
+            "name": "Gourmet Kitchen",
+            "maxCapacity": 60,
+            "description": "A fully equipped kitchen designed for culinary events and classes.",
+            "addressLine1": "Culinary Avenue",
+            "city": 21,
+            "state": 0,
+            "country": 0
+        },
+        "performer": {
+            "name": "Chef Laura",
+            "bio": "A renowned chef known for her exquisite cooking and teaching skills."
+        }
+    },
+    {
+        "id": 145,
+        "title": "Wine Tasting Evening",
+        "description": "An elegant evening of wine tasting featuring a selection of fine wines from around the world.",
+        "price": 700,
+        "organizerId": 123,
+        "performerId": 523,
+        "venueId": 323,
+        "startDateTime": "2024-12-10T19:00:00",
+        "endDateTime": "2024-12-10T22:00:00",
+        "status": 1,
+        "createdOn": "2024-10-07T19:00:00",
+        "modifiedOn": null,
+        "offers": [
+            {
+                "offerId": 23,
+                "type": 0,
+                "discount": 20,
+                "quantity": 30,
+                "groupSize": 2
+            }
+        ],
+        "eventDocuments": [
+            {
+                "eventDocumentId": 145,
+                "eventDocumentType": 1,
+                "title": "Tasting Menu",
+                "filePath": "https://example.com/files/wine_tasting.pdf",
+                "fileType": "pdf"
+            }
+        ],
+        "eventPriceCategories": [
+            {
+                "eventPriceCategoryId": 12367,
+                "eventPriceCategoryName": "Premium Experience",
+                "eventPriceCategoryPrice": 800,
+                "eventPriceCategoryCapacity": 50
+            }
+        ],
+        "venue": {
+            "name": "Wine Cellar Lounge",
+            "maxCapacity": 100,
+            "description": "A sophisticated venue for exclusive wine tasting events.",
+            "addressLine1": "Cellar Lane",
+            "city": 23,
+            "state": 0,
+            "country": 0
+        },
+        "performer": {
+            "name": "Sommelier Eve",
+            "bio": "A top sommelier with expertise in fine wines and wine pairings."
+        }
+    }
+]
