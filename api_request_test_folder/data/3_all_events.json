@@ -1,0 +1,479 @@
+{
+    "status": "success",
+    "message": "List of Events created",
+    "data": [
+        {
+            "id": 1,
+            "title": "Bollywood Music Extravaganza",
+            "description": "Join us for a grand Bollywood music concert featuring top artists, lively performances, and a memorable night.",
+            "price": 3000,
+            "organizer_id": 201,
+            "performer_id": 301,
+            "venue_id": 401,
+            "start_datetime": "2024-10-15T19:00:00",
+            "end_datetime": "2024-10-15T23:00:00",
+            "status": "published",
+            "created_on": "2024-08-26T14:00:00",
+            "modified_on": null,
+            "offers": [
+                {
+                    "id": 1,
+                    "type": "early_bird",
+                    "discount": 25,
+                    "quantity": 50,
+                    "group_size": 0
+                },
+                {
+                    "id": 2,
+                    "type": "group",
+                    "discount": 15,
+                    "quantity": 150,
+                    "group_size": 5
+                }
+            ],
+            "event_documents": [
+                {
+                    "document_id": 1,
+                    "document_type": "poster",
+                    "title": "Concert Poster",
+                    "file_path": "bollywood_music_extravaganza_poster.jpg",
+                    "file_type": "jpg"
+                },
+                {
+                    "document_id": 2,
+                    "document_type": "flyer",
+                    "title": "Concert Flyer",
+                    "file_path": "bollywood_music_extravaganza_flyer.pdf",
+                    "file_type": "pdf"
+                }
+            ],
+            "event_price_category": [
+                {
+                    "id": 1,
+                    "name": "vip",
+                    "price": 6000,
+                    "capacity": 300
+                },
+                {
+                    "id": 2,
+                    "name": "normal",
+                    "price": 2500,
+                    "capacity": 1200
+                }
+            ],
+            "Venue": {
+                "name": "Connaught Place Open-Air Arena",
+                "type": "open_air",
+                "maxcapacity": 15000,
+                "description": "Spacious open-air arena located in the heart of New Delhi, perfect for large concerts.",
+                "address_line_1": "Connaught Place",
+                "address_line_2": "New Delhi",
+                "zip_code": 110001,
+                "city": "New Delhi",
+                "state": "Delhi",
+                "country": 91,
+                "organizer_id": "404"
+            },
+            "Performer": {
+                "name": "Arijit Singh",
+                "bio": "Famed playback singer known for his soulful Bollywood hits.",
+                "profile_pic": "arijit_singh_profile_pic.jpg"
+            }
+        },
+        {
+                "id": 2,
+                "title": "Rock Legends Live",
+                "description": "Experience a thrilling night with top rock bands performing their greatest hits at a spectacular open-air venue.",
+                "price": 2800,
+                "organizer_id": 302,
+                "performer_id": 402,
+                "venue_id": 502,
+                "start_datetime": "2024-10-20T18:00:00",
+                "end_datetime": "2024-10-20T22:00:00",
+                "status": "published",
+                "created_on": "2024-08-28T16:00:00",
+                "modified_on": null,
+                "offers": [
+                  {
+                    "id": 3,
+                    "type": "early_bird",
+                    "discount": 20,
+                    "quantity": 40,
+                    "group_size": 0
+                  },
+                  {
+                    "id": 4,
+                    "type": "group",
+                    "discount": 10,
+                    "quantity": 80,
+                    "group_size": 6
+                  }
+                ],
+                "event_documents": [
+                  {
+                    "document_id": 3,
+                    "document_type": "poster",
+                    "title": "Rock Legends Poster",
+                    "file_path": "rock_legends_poster.jpg",
+                    "file_type": "jpg"
+                  },
+                  {
+                    "document_id": 4,
+                    "document_type": "brochure",
+                    "title": "Rock Legends Brochure",
+                    "file_path": "rock_legends_brochure.pdf",
+                    "file_type": "pdf"
+                  }
+                ],
+                "event_price_category": [
+                  {
+                    "id": 3,
+                    "name": "vip",
+                    "price": 5000,
+                    "capacity": 150
+                  },
+                  {
+                    "id": 4,
+                    "name": "normal",
+                    "price": 2200,
+                    "capacity": 800
+                  }
+                ],
+                "Venue": {
+                  "name": "Gurgaon Open-Air Grounds",
+                  "type": "open_air",
+                  "maxcapacity": 10000,
+                  "description": "Spacious open-air grounds perfect for large-scale rock concerts.",
+                  "address_line_1": "Sector 29",
+                  "address_line_2": "Gurgaon",
+                  "zip_code": 122018,
+                  "city": "Gurgaon",
+                  "state": "Haryana",
+                  "country": 91,
+                  "organizer_id": "505"
+                },
+                "Performer": {
+                  "name": "Euphoria",
+                  "bio": "Popular Indian rock band known for their energetic performances and hit tracks.",
+                  "profile_pic": "euphoria_band_profile_pic.jpg"
+                }
+              
+        },
+        {
+              
+                "id": 3,
+                "title": "Classical Music Evening",
+                "description": "An enchanting evening of classical music performances featuring renowned musicians in a grand theatre setting.",
+                "price": 3500,
+                "organizer_id": 403,
+                "performer_id": 503,
+                "venue_id": 603,
+                "start_datetime": "2024-10-25T18:00:00",
+                "end_datetime": "2024-10-25T21:00:00",
+                "status": "published",
+                "created_on": "2024-08-30T11:00:00",
+                "modified_on": null,
+                "offers": [
+                  {
+                    "id": 5,
+                    "type": "early_bird",
+                    "discount": 15,
+                    "quantity": 30,
+                    "group_size": 0
+                  },
+                  {
+                    "id": 6,
+                    "type": "group",
+                    "discount": 12,
+                    "quantity": 60,
+                    "group_size": 4
+                  }
+                ],
+                "event_documents": [
+                  {
+                    "document_id": 5,
+                    "document_type": "poster",
+                    "title": "Classical Music Evening Poster",
+                    "file_path": "classical_music_evening_poster.jpg",
+                    "file_type": "jpg"
+                  },
+                  {
+                    "document_id": 6,
+                    "document_type": "flyer",
+                    "title": "Classical Music Evening Flyer",
+                    "file_path": "classical_music_evening_flyer.pdf",
+                    "file_type": "pdf"
+                  }
+                ],
+                "event_price_category": [
+                  {
+                    "id": 5,
+                    "name": "vip",
+                    "price": 6000,
+                    "capacity": 150
+                  },
+                  {
+                    "id": 6,
+                    "name": "normal",
+                    "price": 3000,
+                    "capacity": 600
+                  }
+                ],
+                "Venue": {
+                  "name": "Lucknow Royal Theatre",
+                  "type": "theatre",
+                  "maxcapacity": 800,
+                  "description": "Elegant theatre with comfortable seating and excellent acoustics for classical music performances.",
+                  "address_line_1": "Hazratganj",
+                  "address_line_2": "Lucknow",
+                  "zip_code": 226001,
+                  "city": "Lucknow",
+                  "state": "Uttar Pradesh",
+                  "country": 91,
+                  "organizer_id": "606"
+                },
+                "Performer": {
+                  "name": "Pandit Ravi Shankar",
+                  "bio": "Legendary sitar virtuoso renowned for his classical and fusion music performances.",
+                  "profile_pic": "pandit_ravi_shankar_profile_pic.jpg"
+                }
+              },
+          {
+            "id": 5,
+            "title": "Ancient Indian Civilizations Exhibition",
+            "description": "Discover the rich heritage of ancient Indian civilizations through rare artifacts and interactive exhibits at our renowned museum.",
+            "price": 2000,
+            "organizer_id": 605,
+            "performer_id": null,
+            "venue_id": 705,
+            "start_datetime": "2024-11-10T09:00:00",
+            "end_datetime": "2024-11-10T17:00:00",
+            "status": "published",
+            "created_on": "2024-08-05T12:00:00",
+            "modified_on": null,
+            "offers": [
+              {
+                "id": 9,
+                "type": "early_bird",
+                "discount": 15,
+                "quantity": 40,
+                "group_size": 0
+              },
+              {
+                "id": 10,
+                "type": "group",
+                "discount": 10,
+                "quantity": 60,
+                "group_size": 5
+              }
+            ],
+            "event_documents": [
+              {
+                "document_id": 9,
+                "document_type": "poster",
+                "title": "Ancient Indian Civilizations Poster",
+                "file_path": "ancient_indian_civilizations_poster.jpg",
+                "file_type": "jpg"
+              },
+              {
+                "document_id": 10,
+                "document_type": "brochure",
+                "title": "Exhibition Brochure",
+                "file_path": "exhibition_brochure.pdf",
+                "file_type": "pdf"
+              }
+            ],
+            "event_price_category": [
+              {
+                "id": 9,
+                "name": "vip",
+                "price": 3500,
+                "capacity": 100
+              },
+              {
+                "id": 10,
+                "name": "normal",
+                "price": 1800,
+                "capacity": 500
+              }
+            ],
+            "Venue": {
+              "name": "National Museum",
+              "type": "theatre",
+              "maxcapacity": 600,
+              "description": "A prestigious museum in Delhi showcasing historical artifacts and exhibitions with ample space for visitors.",
+              "address_line_1": "Janpath",
+              "address_line_2": "Central Delhi",
+              "zip_code": 110001,
+              "city": "Delhi",
+              "state": "Delhi",
+              "country": 91,
+              "organizer_id": "808"
+            },
+            "Performer": null
+          },
+        {
+
+      "id": 6,
+      "title": "Cultural Heritage Exhibition",
+      "description": "Explore the vibrant cultural heritage of India through art, crafts, and performances at this immersive exhibition.",
+      "price": 1800,
+      "organizer_id": 706,
+      "performer_id": null,
+      "venue_id": 806,
+      "start_datetime": "2024-11-12T11:00:00",
+      "end_datetime": "2024-11-12T19:00:00",
+      "status": "published",
+      "created_on": "2024-08-10T10:00:00",
+      "modified_on": null,
+      "offers": [
+        {
+          "id": 11,
+          "type": "early_bird",
+          "discount": 12,
+          "quantity": 50,
+          "group_size": 0
+        },
+        {
+          "id": 12,
+          "type": "group",
+          "discount": 8,
+          "quantity": 100,
+          "group_size": 4
+        }
+      ],
+      "event_documents": [
+        {
+          "document_id": 11,
+          "document_type": "poster",
+          "title": "Cultural Heritage Exhibition Poster",
+          "file_path": "cultural_heritage_exhibition_poster.jpg",
+          "file_type": "jpg"
+        },
+        {
+          "document_id": 12,
+          "document_type": "catalog",
+          "title": "Exhibition Catalog",
+          "file_path": "cultural_heritage_catalog.pdf",
+          "file_type": "pdf"
+        }
+      ],
+      "event_price_category": [
+        {
+          "id": 11,
+          "name": "vip",
+          "price": 3000,
+          "capacity": 150
+        },
+        {
+          "id": 12,
+          "name": "normal",
+          "price": 1500,
+          "capacity": 800
+        }
+      ],
+      "Venue": {
+        "name": "Gurgaon Cultural Theatre",
+        "type": "theatre",
+        "maxcapacity": 1000,
+        "description": "A spacious theatre dedicated to cultural exhibitions and performances, offering an immersive experience.",
+        "address_line_1": "Sector 29",
+        "address_line_2": "Gurgaon",
+        "zip_code": 122018,
+        "city": "Gurgaon",
+        "state": "Haryana",
+        "country": 91,
+        "organizer_id": "909"
+      },
+      "Performer": null
+    },
+
+    {
+      "id": 7,
+      "title": "Holi Festival Celebration",
+      "description": "Join us for a vibrant Holi celebration with music, dance, and traditional festivities.",
+      "price": 2000,
+      "organizer_id": 202,
+      "performer_id": 302,
+      "venue_id": 402,
+      "start_datetime": "2024-03-25T10:00:00",
+      "end_datetime": "2024-03-25T17:00:00",
+      "status": "published",
+      "created_on": "2024-08-26T14:00:00",
+      "modified_on": null,
+      "offers": [
+          {
+              "id": 1,
+              "type": "early_bird",
+              "discount": 20,
+              "quantity": 100,
+              "group_size": 0
+          },
+          {
+              "id": 2,
+              "type": "group",
+              "discount": 10,
+              "quantity": 200,
+              "group_size": 4
+          }
+      ],
+      "event_documents": [
+          {
+              "document_id": 1,
+              "document_type": "poster",
+              "title": "Holi Festival Poster",
+              "file_path": "holi_festival_poster.jpg",
+              "file_type": "jpg"
+          },
+          {
+              "document_id": 2,
+              "document_type": "flyer",
+              "title": "Holi Celebration Flyer",
+              "file_path": "holi_celebration_flyer.pdf",
+              "file_type": "pdf"
+          }
+      ],
+      "event_price_category": [
+          {
+              "id": 1,
+              "name": "vip",
+              "price": 4000,
+              "capacity": 500
+          },
+          {
+              "id": 2,
+              "name": "normal",
+              "price": 1500,
+              "capacity": 3000
+          }
+      ],
+      "Venue": {
+          "name": "Lodi Garden",
+          "type": "open_air",
+          "maxcapacity": 10000,
+          "description": "A beautiful park with lush greenery, perfect for festive celebrations.",
+          "address_line_1": "Lodi Road",
+          "address_line_2": "New Delhi",
+          "zip_code": 110003,
+          "city": "New Delhi",
+          "state": "Delhi",
+          "country": 91,
+          "organizer_id": "405"
+      },
+      "Performer": {
+          "name": "DJ Nucleya",
+          "bio": "Famous DJ known for electrifying performances and upbeat music.",
+          "profile_pic": "dj_nucleya_profile_pic.jpg"
+      }
+  }
+          
+    ],
+    "pagination": {
+        "current_page": 1,
+        "total_pages": 1,
+        "page_size": 10,
+        "total_items": 1
+    },
+    "errors": []
+}
+  
