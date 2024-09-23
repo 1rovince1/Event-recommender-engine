@@ -56,9 +56,10 @@ recommendable_events_info_list = None   # a list containing all the event data i
 
 # function to perform text pre-processing
 def clean(document):
-  stopwords_removed = " ".join([i for i in document.lower().split() if i not in stopwords_eng])   # removing stopwords
+  
+  stopwords_removed = ' '.join([i for i in document.lower().split() if i not in stopwords_eng])   # removing stopwords
   punctuations_removed = ''.join(ch for ch in stopwords_removed if ch not in punct)   # removing punctuations
-  normalized = " ".join(lemma.lemmatize(word) for word in punctuations_removed.split())   # converting words to their root form
+  normalized = ' '.join(lemma.lemmatize(word) for word in punctuations_removed.split())   # converting words to their root form
   return normalized
 
 
@@ -83,7 +84,7 @@ def update_event_df():
     # editing df
     event_df['CombinedDescription'] = ((event_df['title'] + ' ') * 2 + event_df['description']).apply(lambda x: clean(x))    # CombinedDescription column holds the title and description words (preprocessed using clean function)
 
-    # converting the datetime column to datetime format
+    # converting the datetime columns to datetime format
     event_df['startDateTime'] = pd.to_datetime(event_df['startDateTime'])
     event_df['endDateTime'] = pd.to_datetime(event_df['endDateTime'])
     event_df['Duration'] = (event_df['endDateTime'] - event_df['startDateTime']).dt.total_seconds() / 3600  # Duration column hold the length of the event
@@ -92,7 +93,7 @@ def update_event_df():
     event_df['createdOn'] = pd.to_datetime(event_df['createdOn'])
     event_df['Recency'] = (today_datetime - event_df['createdOn'])  # Recency column holds datetime values w.r.t the recency of the creation of the event
     
-    # creating and saving a smaller dataframe of the events that can be recommended
+    # creating and saving a list of the events that can be recommended (only the events in the future are saved in this list)
     recommendable_events_list = event_df['id'][event_df['startDateTime'] > today_datetime].tolist()
 
     # extracting the info of the events that can be recommended, in the json format to be saved and returned as response when required
@@ -100,6 +101,7 @@ def update_event_df():
 
     # saving the new calculations to the global variables and the json file
     with update_lock:
+
         global retrieved_event_df
         retrieved_event_df = event_df
 
@@ -215,50 +217,23 @@ def organizer_similarity():
 # function to get date similarity
 def date_similarity():
     
-    year_arr = np.array(retrieved_event_df['startDateTime'].dt.year)
-    month_arr = np.array(retrieved_event_df['startDateTime'].dt.month)
-    day_arr = np.array(retrieved_event_df['startDateTime'].dt.day)
+    dates = retrieved_event_df['startDateTime']
     
-    num_dates = len(year_arr)
+    num_dates = len(dates)
     date_similarity_matrix = np.zeros((num_dates, num_dates))
-    year_similarity_matrix = np.zeros((num_dates, num_dates))
-    month_similarity_matrix = np.zeros((num_dates, num_dates))
-    day_similarity_matrix = np.zeros((num_dates, num_dates))
     
-    min_year = np.min(year_arr)
-    max_year = np.max(year_arr)
-    diff_year_min_max = max_year - min_year
+    min_date = dates.min()
+    max_date = dates.max()
+    diff_date_min_max = (max_date - min_date).days
     
-    if(diff_year_min_max == 0.0):
-        diff_year_min_max = 1.0 
+    if(diff_date_min_max == 0.0):
+        diff_date_min_max = 1.0 
 
     for i in range(num_dates):
         for j in range(i, num_dates):
-            diff = abs(year_arr[i] - year_arr[j])
-            norm_val = 1 - (diff / (diff_year_min_max))
-            year_similarity_matrix [i, j] = year_similarity_matrix [j, i] = norm_val
-            
-    for i in range(num_dates):
-        for j in range(i, num_dates):
-            diff = abs(month_arr[i] - month_arr[j])
-            norm_val = 1 - (diff / 11.0)
-            month_similarity_matrix [i, j] = month_similarity_matrix [j, i] = norm_val
-            
-    for i in range(num_dates):
-        for j in range(i, num_dates):
-            diff = abs(day_arr[i] - day_arr[j])
-            norm_val = 1 - (diff / 30.0)
-            day_similarity_matrix [i, j] = day_similarity_matrix [j, i] = norm_val
-                            
-    weight_year = 0.5
-    weight_month = 0.4
-    weight_day = 0.1
-                            
-    date_similarity_matrix = (
-        (weight_year * year_similarity_matrix) +
-        (weight_month * month_similarity_matrix) +
-        (weight_day * day_similarity_matrix)
-    )
+            diff = abs(dates[i] - dates[j]).days
+            norm_val = 1 - (diff / (diff_date_min_max))
+            date_similarity_matrix [i, j] = date_similarity_matrix [j, i] = norm_val
                             
     return date_similarity_matrix
 
@@ -291,10 +266,10 @@ def time_similarity():
 
 
 
-#function to create a new similartiy matrix from the json file (all events api response)
+#function to create a new similartiy matrix from the all-events api response
 def update_content_recommendation_matrix():
 
-    # also updating the dataframe holding the events
+    # first updating the dataframe holding the events
     update_event_df()
 
     #calculation of new similarity matrix
@@ -312,7 +287,7 @@ def update_content_recommendation_matrix():
     weight_venue = 0.05
     weight_organizer = 0.05
     weight_date = 0.05
-    weight_time = 0.05
+    weight_time = 0.05  # we have separated date and time similarity to allow the flexibility to assign different weightage to these attributes
     # in future these weights can be assigned dynamically based on users' preferences about certain criterias (like price etc.)
     # the attributes that the user selects/enters can be used to change these weights dynamically so that the recommendations are more personalised
 
@@ -329,15 +304,16 @@ def update_content_recommendation_matrix():
     # converting the similarity matrix to a dataframe for easier access and manipulation
     content_similarity_df = pd.DataFrame(combined_content_similarity_matrix, index=retrieved_event_df['id'], columns=retrieved_event_df['id'])
 
-    # updating the memory and files with latest events and matrix
+    # updating the memory with latest events and matrix
     with update_lock:
+
         global retrieved_combined_content_similarity_df
         retrieved_combined_content_similarity_df = content_similarity_df
 
 
 
 
-# function to create a new user-item matrix using json file (order-user api response)
+# function to create a new user-item matrix using order history (GetOrderUser) api response
 def update_user_item_matrix():
 
     # getting response from the past order details of users
