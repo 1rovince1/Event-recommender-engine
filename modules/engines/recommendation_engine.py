@@ -72,7 +72,7 @@ def event_in_memory(event_id):
 def latest_events(event_id=None):
 
     # if an event_id is passed, i.e., if we need to display the latest events in the context of some other event, we are ensuring that the same event is not repeated again
-    latest_events_df = updater.retrieved_event_df[updater.retrieved_event_df['id'] != event_id].sort_values(by='recency')
+    latest_events_df = updater.retrieved_event_df[updater.retrieved_event_df['id'] != event_id].sort_values(by='Recency')
     latest_events_list = latest_events_df['id'].tolist()
     latest_available_events_list = event_availability(latest_events_list)
 
@@ -159,7 +159,8 @@ def collaborative_item_based_recommendations(user_id):
 
         return collaborative_item_based_recommended_available_event_list
     
-    # if our user has no past activity, we return the list of latest events (as the list of popular events must be already available to the user on the events listing page)
+    # if our user has no past activity, we return the list of latest events, event though popular events suit this case better,
+    # because the list of popular events must be already available to the user on the events listing page
     else:
         latest_events_list = latest_events()
         return latest_events_list

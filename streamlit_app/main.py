@@ -1,4 +1,5 @@
 import requests
+import pandas as pd
 import streamlit as st
 
 # setting all the required API request links
@@ -50,7 +51,7 @@ def convert_json_to_cards(json_data):
     for event in json_data:
         cards += card_html.format(title = event['title'],
                                   description = event['description'],
-                                  date = event['startDateTime'],
+                                  date = pd.to_datetime(event['startDateTime']),
                                   price = event['price'])
     return cards
 

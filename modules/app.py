@@ -25,10 +25,10 @@ scheduler = BackgroundScheduler()
 def scheduler_on():
 
     sch_update.periodic_update() # updating matrices just at the startup
-    scheduler.add_job(sch_update.periodic_update, 'interval', seconds=10)
+    scheduler.add_job(sch_update.periodic_update, 'interval', minutes=30)
     # scheduler.add_job(periodic_update, 'interval', minutes=30)
     scheduler.start()
-    print('Scheduler started. Recommendation matrices and related files will be updated every 10 seconds.')
+    print('Scheduler started. Recommendation matrices and related files will be updated every 30 minutes.')
 
 
 

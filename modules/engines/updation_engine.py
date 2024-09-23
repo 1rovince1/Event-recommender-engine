@@ -18,10 +18,10 @@ from nltk.corpus import stopwords
 
 
 # API urls to be used
-events_data_url = 'http://127.0.0.1:5000/event_data'
+# events_data_url = 'http://127.0.0.1:5000/event_data'
 users_data_url = 'http://127.0.0.1:5000/user_data'
-# server_url = 'https://75e5-157-119-213-251.ngrok-free.app/'
-# events_data_url = server_url + '/api/bm/events'
+server_url = 'https://9d0a-157-119-213-251.ngrok-free.app'
+events_data_url = server_url + '/api/bm/events'
 # users_data_url = server_url + '/api/bm/GetOrderUser'
 
 
@@ -81,16 +81,16 @@ def update_event_df():
     event_df = event_df[event_df['status'] == 1]
 
     # editing df
-    event_df['combined_description'] = ((event_df['title'] + ' ') * 2 + event_df['description']).apply(lambda x: clean(x))    # combined_description column holds the title and description words (preprocessed using clean function)
+    event_df['CombinedDescription'] = ((event_df['title'] + ' ') * 2 + event_df['description']).apply(lambda x: clean(x))    # CombinedDescription column holds the title and description words (preprocessed using clean function)
 
     # converting the datetime column to datetime format
     event_df['startDateTime'] = pd.to_datetime(event_df['startDateTime'])
     event_df['endDateTime'] = pd.to_datetime(event_df['endDateTime'])
-    event_df['duration'] = (event_df['endDateTime'] - event_df['startDateTime']).dt.total_seconds() / 3600  # duration column hold the length of the event
+    event_df['Duration'] = (event_df['endDateTime'] - event_df['startDateTime']).dt.total_seconds() / 3600  # Duration column hold the length of the event
 
     today_datetime = pd.to_datetime('today')
     event_df['createdOn'] = pd.to_datetime(event_df['createdOn'])
-    event_df['recency'] = (today_datetime - event_df['createdOn'])  # recency column holds datetime values w.r.t the recency of the creatoin of the event
+    event_df['Recency'] = (today_datetime - event_df['createdOn'])  # Recency column holds datetime values w.r.t the recency of the creation of the event
     
     # creating and saving a smaller dataframe of the events that can be recommended
     recommendable_events_list = event_df['id'][event_df['startDateTime'] > today_datetime].tolist()
@@ -117,7 +117,7 @@ def title_desc_similarity():
 
     # using tfidf to calculate similarity among events based on the combined description
     tfidf = TfidfVectorizer(analyzer='word', ngram_range=(1, 5), min_df=0.0, stop_words='english')
-    tfidf_matrix = tfidf.fit_transform(retrieved_event_df['combined_description'])
+    tfidf_matrix = tfidf.fit_transform(retrieved_event_df['CombinedDescription'])
     desc_similarity_matrix = linear_kernel(tfidf_matrix, tfidf_matrix)
 
     return desc_similarity_matrix
@@ -150,7 +150,7 @@ def price_similarity():
 #function to get duration similarity matrix
 def duration_similarity():
 
-    duration_arr = np.array(retrieved_event_df['duration'])
+    duration_arr = np.array(retrieved_event_df['Duration'])
     num_durations = len(duration_arr)
     duration_similarity_matrix = np.zeros((num_durations, num_durations))
 
@@ -183,9 +183,9 @@ def venue_similarity():
     venue_state_similarity = linear_kernel(state_encoded, state_encoded)    # matrix representing similarity in state
     venue_country_similarity = linear_kernel(country_encoded, country_encoded)  # matrix representing similarity in country
 
-    weight_country = 0.1
-    weight_state = 0.3
-    weight_city = 0.6
+    weight_country = 0.5
+    weight_state = 0.4
+    weight_city = 0.1
 
     venue_similarity_matrix = (
         (weight_country * venue_country_similarity) + 
@@ -212,6 +212,78 @@ def organizer_similarity():
 
 
 
+# function to get date similarity
+def date_similarity():
+    
+    year_arr = np.array(retrieved_event_df['startDateTime'].dt.year)
+    month_arr = np.array(retrieved_event_df['startDateTime'].dt.month)
+    day_arr = np.array(retrieved_event_df['startDateTime'].dt.day)
+    
+    num_dates = len(year_arr)
+    date_similarity_matrix = np.zeros((num_dates, num_dates))
+    year_similarity_matrix = np.zeros((num_dates, num_dates))
+    month_similarity_matrix = np.zeros((num_dates, num_dates))
+    day_similarity_matrix = np.zeros((num_dates, num_dates))
+    
+    min_year = np.min(year_arr)
+    max_year = np.max(year_arr)
+    diff_year_min_max = max_year - min_year
+    
+    if(diff_year_min_max == 0.0):
+        diff_year_min_max = 1.0 
+
+    for i in range(num_dates):
+        for j in range(i, num_dates):
+            diff = abs(year_arr[i] - year_arr[j])
+            norm_val = 1 - (diff / (diff_year_min_max))
+            year_similarity_matrix [i, j] = year_similarity_matrix [j, i] = norm_val
+            
+    for i in range(num_dates):
+        for j in range(i, num_dates):
+            diff = abs(month_arr[i] - month_arr[j])
+            norm_val = 1 - (diff / 11.0)
+            month_similarity_matrix [i, j] = month_similarity_matrix [j, i] = norm_val
+            
+    for i in range(num_dates):
+        for j in range(i, num_dates):
+            diff = abs(day_arr[i] - day_arr[j])
+            norm_val = 1 - (diff / 30.0)
+            day_similarity_matrix [i, j] = day_similarity_matrix [j, i] = norm_val
+                            
+    weight_year = 0.5
+    weight_month = 0.4
+    weight_day = 0.1
+                            
+    date_similarity_matrix = (
+        (weight_year * year_similarity_matrix) +
+        (weight_month * month_similarity_matrix) +
+        (weight_day * day_similarity_matrix)
+    )
+                            
+    return date_similarity_matrix
+
+
+
+
+# function to get time(hour) similarity
+def time_similarity():
+    
+    hour_arr = np.array(retrieved_event_df['startDateTime'].dt.hour)
+    
+    num_times = len(hour_arr)
+    hour_similarity_matrix = np.zeros((num_times, num_times))
+            
+    for i in range(num_times):
+        for j in range(i, num_times):
+            diff = abs(hour_arr[i] - hour_arr[j])
+            norm_val = 1 - (diff / 23.0)
+            hour_similarity_matrix [i, j] = hour_similarity_matrix [j, i] = norm_val
+                            
+    return hour_similarity_matrix
+
+
+
+
 
 
 
@@ -231,19 +303,27 @@ def update_content_recommendation_matrix():
     duration_similarity_matrix = duration_similarity()
     venue_similarity_matrix = venue_similarity()
     organizer_similarity_matrix = organizer_similarity()
+    date_similarity_matrix = date_similarity()
+    time_similarity_matrix = time_similarity()
 
     weight_desc = 0.7
     weight_price = 0.05
     weight_duration = 0.05
-    weight_venue = 0.1
-    weight_organizer = 0.1
+    weight_venue = 0.05
+    weight_organizer = 0.05
+    weight_date = 0.05
+    weight_time = 0.05
+    # in future these weights can be assigned dynamically based on users' preferences about certain criterias (like price etc.)
+    # the attributes that the user selects/enters can be used to change these weights dynamically so that the recommendations are more personalised
 
     combined_content_similarity_matrix = (
         (weight_desc * title_desc_similarity_matrix) +
         (weight_price * price_similarity_matrix) +
         (weight_duration * duration_similarity_matrix) +
         (weight_venue * venue_similarity_matrix) +
-        (weight_organizer * organizer_similarity_matrix)
+        (weight_organizer * organizer_similarity_matrix) +
+        (weight_date * date_similarity_matrix) +
+        (weight_time * time_similarity_matrix)
     )
 
     # converting the similarity matrix to a dataframe for easier access and manipulation
