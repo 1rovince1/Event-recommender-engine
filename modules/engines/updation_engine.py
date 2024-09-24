@@ -18,11 +18,11 @@ from nltk.corpus import stopwords
 
 
 # API urls to be used
-# events_data_url = 'http://127.0.0.1:5000/event_data'
-users_data_url = 'http://127.0.0.1:5000/user_data'
-server_url = 'https://9d0a-157-119-213-251.ngrok-free.app'
-events_data_url = server_url + '/api/bm/events'
-# users_data_url = server_url + '/api/bm/GetOrderUser'
+# events_data_url = 'http://127.0.0.1:5000/event_data'  # API from local server (inside the api_request_test_folder), for events' data
+users_data_url = 'http://127.0.0.1:5000/user_data'  # API from local server (inside the api_request_test_folder), for order history data
+server_url = 'https://9d0a-157-119-213-251.ngrok-free.app'  # remote server url
+events_data_url = server_url + '/api/bm/events' # remote server endpoint to obtain the data of all events
+# users_data_url = server_url + '/api/bm/GetOrderUser'  # remote server url to obtain the data of order history
 
 
 # creating a thread lock mechanism to protect files while they are being updated
@@ -90,7 +90,7 @@ def update_event_df():
     event_df['Duration'] = (event_df['endDateTime'] - event_df['startDateTime']).dt.total_seconds() / 3600  # Duration column hold the length of the event
 
     today_datetime = pd.to_datetime('today')
-    event_df['createdOn'] = pd.to_datetime(event_df['createdOn'])
+    event_df['createdOn'] = pd.to_datetime(event_df['createdOn'])   # we have to use modifiedOn instead of createdOn (but current data have it configured to null, so createdOn is being used as a subitute till the response is configured correctly)
     event_df['Recency'] = (today_datetime - event_df['createdOn'])  # Recency column holds datetime values w.r.t the recency of the creation of the event
     
     # creating and saving a list of the events that can be recommended (only the events in the future are saved in this list)
@@ -118,6 +118,7 @@ def update_event_df():
 def title_desc_similarity():
 
     # using tfidf to calculate similarity among events based on the combined description
+    # we can improve recommendations by using more advanced models like word embeddings, BERT etc., in future, which will be able to understand the meaning of the title and description
     tfidf = TfidfVectorizer(analyzer='word', ngram_range=(1, 5), min_df=0.0, stop_words='english')
     tfidf_matrix = tfidf.fit_transform(retrieved_event_df['CombinedDescription'])
     desc_similarity_matrix = linear_kernel(tfidf_matrix, tfidf_matrix)
@@ -185,8 +186,8 @@ def venue_similarity():
     venue_state_similarity = linear_kernel(state_encoded, state_encoded)    # matrix representing similarity in state
     venue_country_similarity = linear_kernel(country_encoded, country_encoded)  # matrix representing similarity in country
 
-    weight_country = 0.5
-    weight_state = 0.4
+    weight_country = 0.55
+    weight_state = 0.35
     weight_city = 0.1
 
     venue_similarity_matrix = (
@@ -280,14 +281,15 @@ def update_content_recommendation_matrix():
     organizer_similarity_matrix = organizer_similarity()
     date_similarity_matrix = date_similarity()
     time_similarity_matrix = time_similarity()
+    # these different types of similarities can also be used separately in future
 
-    weight_desc = 0.7
+    weight_desc = 0.55  # weighted over half (for now) so that even the combined weight of other attributes does not override the description similarity
     weight_price = 0.05
-    weight_duration = 0.05
-    weight_venue = 0.05
-    weight_organizer = 0.05
-    weight_date = 0.05
-    weight_time = 0.05  # we have separated date and time similarity to allow the flexibility to assign different weightage to these attributes
+    weight_duration = 0.025
+    weight_venue = 0.2
+    weight_organizer = 0.025
+    weight_date = 0.075
+    weight_time = 0.075  # we have separated date and time similarity to allow the flexibility to assign different weightage to these attributes
     # in future these weights can be assigned dynamically based on users' preferences about certain criterias (like price etc.)
     # the attributes that the user selects/enters can be used to change these weights dynamically so that the recommendations are more personalised
 

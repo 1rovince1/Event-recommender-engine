@@ -2,6 +2,9 @@ import requests
 import pandas as pd
 import streamlit as st
 
+# setting the stremlit app's layout to a wider view
+st.set_page_config(layout='wide')
+
 # setting all the required API request links
 app_url = 'http://127.0.0.1:8000'
 popular_events_endpoint = app_url + '/api/bm/recommendations/popular_events?max_recommendations={max_recommendations}'
@@ -29,10 +32,14 @@ cards_html = '''
 card_html = '''
     <div style="background-color:#f9f9f9; padding:10px; border-radius:10px;
                 box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); margin:10px;
-                width:45%; height:300px">
+                width:300px; height:430px">
         <h3>{title}</h3>
         <p><b>Description:</b> {description}</p>
         <p><b>Date:</b> {date}</p>
+        <p><b>Time:</b> {time}</p>
+        <p><b>Duration:</b> {duration}</p>
+        <p><b>Organizer:</b> {organizer}</p>
+        <p><b>City:</b> {city}</p>
         <p><b>Price:</b> {price}</p>
     </div>
 '''
@@ -51,7 +58,11 @@ def convert_json_to_cards(json_data):
     for event in json_data:
         cards += card_html.format(title = event['title'],
                                   description = event['description'],
-                                  date = pd.to_datetime(event['startDateTime']),
+                                  date = pd.to_datetime(event['startDateTime']).date(),
+                                  time = pd.to_datetime(event['startDateTime']).time(),
+                                  duration = (pd.to_datetime(event['endDateTime']) - pd.to_datetime(event['startDateTime'])),
+                                  organizer = event['organizerId'],
+                                  city = event['venue']['city'],
                                   price = event['price'])
     return cards
 
