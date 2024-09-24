@@ -77,7 +77,8 @@ def update_event_df():
         return error_message
         
     df = json_normalize(json_obj['data']) # converting the complex json data format to a simpler tabular format
-    event_df = df[['id', 'title', 'description', 'price', 'status', 'organizerId', 'startDateTime', 'endDateTime', 'createdOn', 'venue.city', 'venue.state', 'venue.country']].copy()
+    event_df = df[['id', 'title', 'description', 'price', 'status', 'organizerId', 'startDateTime', 'endDateTime', 'createdOn', 'modifiedOn', 'venue.city', 'venue.state', 'venue.country']].copy()
+    event_df['modifiedOn'] = event_df['modifiedOn'].fillna(event_df['createdOn'])   # if by chance (while still in development), the modifiedOn column has null values, we'll use the createdOn values for the corresponding data
     event_df = event_df.dropna() # removing any event that has these values as null (not possible, but kept to avoid unwanted errors)
     event_df = event_df[event_df['status'] == 1]
 
@@ -90,8 +91,8 @@ def update_event_df():
     event_df['Duration'] = (event_df['endDateTime'] - event_df['startDateTime']).dt.total_seconds() / 3600  # Duration column hold the length of the event
 
     today_datetime = pd.to_datetime('today')
-    event_df['createdOn'] = pd.to_datetime(event_df['createdOn'])   # we have to use modifiedOn instead of createdOn (but current data have it configured to null, so createdOn is being used as a subitute till the response is configured correctly)
-    event_df['Recency'] = (today_datetime - event_df['createdOn'])  # Recency column holds datetime values w.r.t the recency of the creation of the event
+    event_df['modifiedOn'] = pd.to_datetime(event_df['modifiedOn'])
+    event_df['Recency'] = (today_datetime - event_df['modifiedOn'])  # Recency column holds datetime values w.r.t the recency of the creation of the event
     
     # creating and saving a list of the events that can be recommended (only the events in the future are saved in this list)
     recommendable_events_list = event_df['id'][event_df['startDateTime'] > today_datetime].tolist()
