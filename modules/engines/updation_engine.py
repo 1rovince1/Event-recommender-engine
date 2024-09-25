@@ -233,7 +233,7 @@ def date_similarity():
 
     for i in range(num_dates):
         for j in range(i, num_dates):
-            diff = abs(dates[i] - dates[j]).days
+            diff = abs(dates.iloc[i] - dates.iloc[j]).days
             norm_val = 1 - (diff / (diff_date_min_max))
             date_similarity_matrix [i, j] = date_similarity_matrix [j, i] = norm_val
                             
