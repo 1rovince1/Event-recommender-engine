@@ -81,7 +81,7 @@ def update_event_df():
     # df = json_normalize(json_obj['data']) # converting the complex json data format to a simpler tabular format
     event_df = df[['id', 'title', 'description', 'price', 'status', 'organizerId', 'startDateTime', 'endDateTime', 'venue.cityId', 'venue.stateId', 'venue.country']].copy()
     event_df = event_df.dropna() # removing any event that has these values as null (not possible, but kept to avoid unwanted errors)
-    # event_df = event_df[event_df['status'] == "Published"]
+    event_df = event_df[event_df['status'] == "Published"]
 
     # editing df
     event_df['CombinedDescription'] = ((event_df['title'] + ' ') + event_df['description']).apply(lambda x: clean(x))    # CombinedDescription column holds the title and description words (preprocessed using clean function)
