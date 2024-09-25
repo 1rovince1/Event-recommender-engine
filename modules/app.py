@@ -25,8 +25,8 @@ scheduler = BackgroundScheduler()
 def scheduler_on():
 
     sch_update.periodic_update() # updating matrices just at the startup
+    # scheduler.add_job(sch_update.periodic_update, 'interval', seconds=10)
     scheduler.add_job(sch_update.periodic_update, 'interval', minutes=30)
-    # scheduler.add_job(periodic_update, 'interval', minutes=30)
     scheduler.start()
     print('Scheduler started. Recommendation matrices and related files will be updated every 30 minutes.')
 
@@ -86,7 +86,7 @@ async def personal_recommendations_for_user(
     max_recommendations: Optional[int] = Query(5, description="Number of recommendations required")):
 
     try:
-        if not current_user_id:
+        if current_user_id is None:
             raise HTTPException(status_code=400, detail="Missing 'current_user_id' in request parameters.")
 
         # calling the recommendation logic
@@ -118,7 +118,7 @@ async def events_similar_to_this_event(
     max_recommendations: Optional[int] = Query(2, description="Number of recommendations required")):
 
     try:
-        if not current_event_id:
+        if current_event_id is None:
             raise HTTPException(status_code=400, detail="Missing 'current_event_id' in request parameters.")
 
         # calling the recommendation logic
@@ -150,7 +150,7 @@ async def other_users_also_liked(
     max_recommendations: Optional[int] = Query(2, description="Number of recommendations required")):
 
     try:
-        if not current_event_id:
+        if current_event_id is None:
             raise HTTPException(status_code=400, detail="Missing 'current_event_id' in request parameters.")
 
         # calling the recommendation logic

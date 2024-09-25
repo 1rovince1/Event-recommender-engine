@@ -1,0 +1,59 @@
+import pandas as pd
+import numpy as np
+import requests
+from sklearn.metrics.pairwise import cosine_similarity
+from threading import Lock
+
+# Assuming update_lock is defined elsewhere
+update_lock = Lock()
+
+# Global variables to hold the user-item matrix and item similarity
+retrieved_user_item_matrix_df = pd.DataFrame()
+retrieved_item_similarity_df = pd.DataFrame()
+
+# Function to update user-item matrix
+def update_user_item_matrix():
+    
+    response = requests.get(users_data_url)
+    if response.status_code == 200:
+        user_json_obj = response.json()
+    else:
+        return f"error: {response.status_code}"
+
+    # Create a DataFrame from the new bookings data
+    new_user_df = pd.DataFrame(user_json_obj).rename(columns={'eventId': 'event_id', 'userId': 'user_id'})
+
+    with update_lock:
+        global retrieved_user_item_matrix_df
+        
+        # Initialize the user-item matrix if it doesn't exist
+        if retrieved_user_item_matrix_df.empty:
+      
+            retrieved_user_item_matrix_df = pd.pivot_table(new_user_df, index='user_id', columns='event_id', aggfunc='size', fill_value=0)
+        
+        # Update if it exists
+        else:
+            
+            for _, row in new_user_df.iterrows():
+                user_id = row['user_id']
+                event_id = row['event_id']
+                
+                # Check if the user_id already exists in the matrix
+                if user_id not in retrieved_user_item_matrix_df.index:
+                    # If not, add a new row for the new user
+                    retrieved_user_item_matrix_df.loc[user_id] = 0
+                
+                # Check if the event_id already exists in the matrix
+                if event_id not in retrieved_user_item_matrix_df.columns:
+                    # If not, add a new column for the new event
+                    retrieved_user_item_matrix_df[event_id] = 0
+                
+                # Update the interaction to indicate a booking (1)
+                retrieved_user_item_matrix_df.at[user_id, event_id] = 1
+
+        # Calculate cosine similarity between items and store the matrix as a DataFrame
+        item_similarity_matrix = cosine_similarity(retrieved_user_item_matrix_df.T)
+        global retrieved_item_similarity_df
+        retrieved_item_similarity_df = pd.DataFrame(item_similarity_matrix, index=retrieved_user_item_matrix_df.columns, columns=retrieved_user_item_matrix_df.columns)
+
+

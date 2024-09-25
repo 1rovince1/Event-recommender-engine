@@ -21,7 +21,7 @@ def event_availability(recommendation_list):
 
 # checking if the user's data is present in the user-item matrix or not
 def user_activeness(user_id):
-
+    
     if user_id is None:
         return False
 
@@ -69,14 +69,14 @@ def event_in_memory(event_id):
 
 
 # function to return events in order: latest to oldest
-def latest_events(event_id=None):
+def upcoming_events(event_id=None):
 
     # if an event_id is passed, i.e., if we need to display the latest events in the context of some other event, we are ensuring that the same event is not repeated again
-    latest_events_df = updater.retrieved_event_df[updater.retrieved_event_df['id'] != event_id].sort_values(by='Recency')
-    latest_events_list = latest_events_df['id'].tolist()
-    latest_available_events_list = event_availability(latest_events_list)
+    upcoming_events_df = updater.retrieved_event_df[updater.retrieved_event_df['id'] != event_id].sort_values(by='Upcoming')
+    upcoming_events_list = upcoming_events_df['id'].tolist()
+    upcoming_available_events_list = event_availability(upcoming_events_list)
 
-    return latest_available_events_list
+    return upcoming_available_events_list
 
 
 
@@ -111,8 +111,8 @@ def content_based_recommendations(event_id):
     
     # returning latest events if the event is fairly new
     else:
-        latest_events_list = latest_events(event_id)
-        return latest_events_list
+        upcoming_events_list = upcoming_events(event_id)
+        return upcoming_events_list
 
 
 
@@ -162,5 +162,5 @@ def collaborative_item_based_recommendations(user_id):
     # if our user has no past activity, we return the list of latest events, event though popular events suit this case better,
     # because the list of popular events must be already available to the user on the events listing page
     else:
-        latest_events_list = latest_events()
-        return latest_events_list
+        upcoming_events_list = upcoming_events()
+        return upcoming_events_list

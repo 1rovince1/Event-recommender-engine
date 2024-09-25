@@ -14,7 +14,7 @@ async def get_event_data():
 
 @app.get('/user_data', response_model = Dict[str, Any])
 async def get_user_data():
-    with open('data/new_event_user_data.json', 'r') as file:
+    with open('data/event_user_data.json', 'r') as file:
         json_obj_2 = json.load(file)
 
     return JSONResponse(content=json_obj_2)

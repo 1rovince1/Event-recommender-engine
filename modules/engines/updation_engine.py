@@ -20,8 +20,9 @@ from nltk.corpus import stopwords
 # API urls to be used
 # events_data_url = 'http://127.0.0.1:5000/event_data'  # API from local server (inside the api_request_test_folder), for events' data
 users_data_url = 'http://127.0.0.1:5000/user_data'  # API from local server (inside the api_request_test_folder), for order history data
-server_url = 'https://9d0a-157-119-213-251.ngrok-free.app'  # remote server url
-events_data_url = server_url + '/api/bm/events' # remote server endpoint to obtain the data of all events
+# server_url = 'https://53ba-157-119-213-251.ngrok-free.app'  # remote server url
+# events_data_url = server_url + '/api/bm/events?pageNumber=1&pageSize=10000' # remote server endpoint to obtain the data of all events (currently does not allow data of events more than the pagesize)
+events_data_url = 'https://310e-117-243-214-166.ngrok-free.app/api/em/event?Page=1&Size=100' # data from event module
 # users_data_url = server_url + '/api/bm/GetOrderUser'  # remote server url to obtain the data of order history
 
 
@@ -75,27 +76,26 @@ def update_event_df():
     else:
         error_message = "error: " + str(response.status_code)
         return error_message
-        
-    df = json_normalize(json_obj['data']) # converting the complex json data format to a simpler tabular format
-    event_df = df[['id', 'title', 'description', 'price', 'status', 'organizerId', 'startDateTime', 'endDateTime', 'createdOn', 'modifiedOn', 'venue.city', 'venue.state', 'venue.country']].copy()
-    event_df['modifiedOn'] = event_df['modifiedOn'].fillna(event_df['createdOn'])   # if by chance (while still in development), the modifiedOn column has null values, we'll use the createdOn values for the corresponding data
+
+    df = json_normalize(json_obj['data']).rename(columns={'base_price': 'price','organizer_id': 'organizerId', 'start_date_time': 'startDateTime', 'end_date_time': 'endDateTime', 'venue.city_id': 'venue.cityId', 'venue.state_id': 'venue.stateId', 'venue.country_id': 'venue.country' })    
+    # df = json_normalize(json_obj['data']) # converting the complex json data format to a simpler tabular format
+    event_df = df[['id', 'title', 'description', 'price', 'status', 'organizerId', 'startDateTime', 'endDateTime', 'venue.cityId', 'venue.stateId', 'venue.country']].copy()
     event_df = event_df.dropna() # removing any event that has these values as null (not possible, but kept to avoid unwanted errors)
-    event_df = event_df[event_df['status'] == 1]
+    # event_df = event_df[event_df['status'] == "Published"]
 
     # editing df
-    event_df['CombinedDescription'] = ((event_df['title'] + ' ') * 2 + event_df['description']).apply(lambda x: clean(x))    # CombinedDescription column holds the title and description words (preprocessed using clean function)
+    event_df['CombinedDescription'] = ((event_df['title'] + ' ') + event_df['description']).apply(lambda x: clean(x))    # CombinedDescription column holds the title and description words (preprocessed using clean function)
 
     # converting the datetime columns to datetime format
     event_df['startDateTime'] = pd.to_datetime(event_df['startDateTime'])
     event_df['endDateTime'] = pd.to_datetime(event_df['endDateTime'])
     event_df['Duration'] = (event_df['endDateTime'] - event_df['startDateTime']).dt.total_seconds() / 3600  # Duration column hold the length of the event
 
-    today_datetime = pd.to_datetime('today')
-    event_df['modifiedOn'] = pd.to_datetime(event_df['modifiedOn'])
-    event_df['Recency'] = (today_datetime - event_df['modifiedOn'])  # Recency column holds datetime values w.r.t the recency of the creation of the event
+    current_utc_datetime = pd.to_datetime('now', utc=True)
+    event_df['Upcoming'] = (event_df['startDateTime'] - current_utc_datetime)  # Upcoming column hold the time duration which is left before the startDateTime of event arrives
     
     # creating and saving a list of the events that can be recommended (only the events in the future are saved in this list)
-    recommendable_events_list = event_df['id'][event_df['startDateTime'] > today_datetime].tolist()
+    recommendable_events_list = event_df['id'][event_df['startDateTime'] > current_utc_datetime].tolist()
 
     # extracting the info of the events that can be recommended, in the json format to be saved and returned as response when required
     recommendable_json_obj = [event_info for event_info in json_obj['data'] if event_info['id'] in recommendable_events_list]
@@ -120,7 +120,7 @@ def title_desc_similarity():
 
     # using tfidf to calculate similarity among events based on the combined description
     # we can improve recommendations by using more advanced models like word embeddings, BERT etc., in future, which will be able to understand the meaning of the title and description
-    tfidf = TfidfVectorizer(analyzer='word', ngram_range=(1, 5), min_df=0.0, stop_words='english')
+    tfidf = TfidfVectorizer(analyzer='word', ngram_range=(1, 2), min_df=0.0, stop_words='english')
     tfidf_matrix = tfidf.fit_transform(retrieved_event_df['CombinedDescription'])
     desc_similarity_matrix = linear_kernel(tfidf_matrix, tfidf_matrix)
 
@@ -178,8 +178,8 @@ def venue_similarity():
 
     ohenc = OneHotEncoder()
 
-    city_encoded = ohenc.fit_transform(retrieved_event_df[['venue.city']])  # encoding the city values
-    state_encoded = ohenc.fit_transform(retrieved_event_df[['venue.state']])    # encoding the state values
+    city_encoded = ohenc.fit_transform(retrieved_event_df[['venue.cityId']])  # encoding the city values
+    state_encoded = ohenc.fit_transform(retrieved_event_df[['venue.stateId']])    # encoding the state values
     country_encoded = ohenc.fit_transform(retrieved_event_df[['venue.country']])    # encoding the country values
 
     # cosine_similarites for venue components
@@ -187,9 +187,9 @@ def venue_similarity():
     venue_state_similarity = linear_kernel(state_encoded, state_encoded)    # matrix representing similarity in state
     venue_country_similarity = linear_kernel(country_encoded, country_encoded)  # matrix representing similarity in country
 
-    weight_country = 0.55
-    weight_state = 0.35
-    weight_city = 0.1
+    weight_country = 0.75
+    weight_state = 0.20
+    weight_city = 0.05
 
     venue_similarity_matrix = (
         (weight_country * venue_country_similarity) + 
@@ -268,7 +268,11 @@ def time_similarity():
 
 
 
-#function to create a new similartiy matrix from the all-events api response
+# function to create a new similartiy matrix from the all-events api response
+# in future we can use the separate similarity matrices which comprise of the combined_content_similarity matrix to provide recommendations based on user-criteria
+# for this purpose, we can either use the separate matrices for separate use-cases, and combine the results as per requirements
+# for eg, if user wants 'food' events with price of around '500', we can comine the description and price similarities (w.r.t user-entered values) separately for this purpose,
+# and either assign the weights to other criterias (if we want other criterias to weigh-in by default) based on some calculation, or leave them out completely
 def update_content_recommendation_matrix():
 
     # first updating the dataframe holding the events
@@ -316,6 +320,10 @@ def update_content_recommendation_matrix():
 
 
 
+# for now, we are creating the whole user-item matrix from scratch every time
+# but we can use an incremental approach where only new changes are added to the matrix (the sample code is present in a text file in the modules folder)
+# in future, as a different approach we can use neural networks to fill the user-item matrix, instead of relying on cosine similarity
+# but to use neural networks, we need actual meaningful data to train the model correctly. also the training of the neural network needs to be scheduled in a similar way
 # function to create a new user-item matrix using order history (GetOrderUser) api response
 def update_user_item_matrix():
 
@@ -328,8 +336,11 @@ def update_user_item_matrix():
         return error_message
 
     # creation of the user-item matrix
-    user_df = pd.DataFrame(user_json_obj).rename(columns={'eventId': 'event_id', 'userId': 'user_id'})
-    user_item_matrix = pd.pivot_table(user_df, index='user_id', columns='event_id', aggfunc='size', fill_value=0)
+    user_df = pd.DataFrame(user_json_obj)
+    user_item_matrix = pd.pivot_table(user_df, index='userId', columns='eventId', aggfunc='size', fill_value=0)
+
+    # here we are converting every user-item interaction to 0 or 1 (binary) to prevent skewness/bias
+    # this also allows us to get similarity of events based on the different users that interact with it, without taking into account the number of tickets one user books
     user_item_matrix = pd.DataFrame(
         np.where(user_item_matrix > 0, 1, 0),
         index=user_item_matrix.index,
