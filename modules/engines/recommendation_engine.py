@@ -1,4 +1,3 @@
-import importlib
 from engines import updation_engine as updater
 
 
@@ -72,8 +71,6 @@ def event_in_memory(event_id):
 # function to return events in order: latest to oldest
 def upcoming_events(event_id=None):
 
-    importlib.reload(updater)
-
     # if an event_id is passed, i.e., if we need to display the latest events in the context of some other event, we are ensuring that the same event is not repeated again
     upcoming_events_df = updater.retrieved_event_df[updater.retrieved_event_df['id'] != event_id].sort_values(by='Upcoming')
     upcoming_events_list = upcoming_events_df['id'].tolist()
@@ -87,8 +84,6 @@ def upcoming_events(event_id=None):
 # because if 1 or 2 parties book the entire event or most number of seats, it should not be tagged as popular
 def popular_events(event_id=None):
 
-    importlib.reload(updater)
-
     # if an event_id is passed, i.e., we want to get popular events in the context of another event, we ensure that the same event is not returned again
     popularity_scores = updater.retrieved_user_item_matrix_df.loc[:, updater.retrieved_user_item_matrix_df.columns != event_id].sum()
     popular_events_list = popularity_scores.sort_values(ascending=False).index.tolist()
@@ -101,8 +96,6 @@ def popular_events(event_id=None):
 
 #function to get content based recommendations
 def content_based_recommendations(event_id):
-
-    importlib.reload(updater)
     
     # finding similar events if the event is present in the dataframe, i.e., it has been considered for similarity calculation
     if event_in_memory(event_id):
@@ -127,8 +120,6 @@ def content_based_recommendations(event_id):
 # function to get items users-also liked
 def users_also_liked(event_id):
 
-    importlib.reload(updater)
-
     # finding similarly-liked events if event has some activity, hence in user-item matrix
     if event_activeness(event_id):
         similar_events = updater.retrieved_item_similarity_df.loc[event_id]
@@ -151,8 +142,6 @@ def users_also_liked(event_id):
 
 #function to get collaborative recommendations
 def collaborative_item_based_recommendations(user_id):
-
-    importlib.reload(updater)
 
     # finding events that are similar to our user's likes, based on interactivity of other users, if our user has past activity
     if user_activeness(user_id):

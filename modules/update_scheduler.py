@@ -1,6 +1,5 @@
 import threading
 import time
-import importlib
 
 from engines import updation_engine as updater
 import similarity_weights as wconfig
@@ -146,8 +145,6 @@ def update_events_info_list():
 # handling periodic updates of the similarity matrix saved
 def periodic_update():
 
-    importlib.reload(updater)
-
     # calculating the time elapsed in updation
     updation_start_time = time.time()
 
@@ -188,8 +185,6 @@ def customize_content_similarity_matrix(
         weight_date_of_event,
         weight_time_of_event
 ):
-    
-    importlib.reload(updater)
 
     try:
 
@@ -231,8 +226,6 @@ def customize_content_similarity_matrix(
 
         with open('similarity_weights.py', 'w') as file:
             file.write(new_config)
-
-        importlib.reload(wconfig)
 
         print('Updated the config file successfully!')
 

@@ -1,5 +1,4 @@
 from typing import Optional, Dict, Any
-import importlib
 
 from fastapi import FastAPI, HTTPException, Query
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -24,8 +23,6 @@ scheduler = BackgroundScheduler()
 
 @app.on_event('startup')
 def scheduler_on():
-
-    importlib.reload(sch_update)
 
     sch_update.periodic_update() # updating matrices just at the startup
     # scheduler.add_job(sch_update.periodic_update, 'interval', seconds=10)
@@ -59,9 +56,6 @@ def scheduler_off():
 async def popular_events(
     max_recommendations: Optional[int] = Query(5, description="Number of recommendations required")):
 
-    importlib.reload(recommender)
-    importlib.reload(sch_update)
-
     try:
         # calling the recommendation logic
         recommended_event_ids = recommender.popular_events()
@@ -90,9 +84,6 @@ async def popular_events(
 async def personal_recommendations_for_user(
     current_user_id: int = Query(..., description="User ID of the current user"),
     max_recommendations: Optional[int] = Query(5, description="Number of recommendations required")):
-
-    importlib.reload(recommender)
-    importlib.reload(sch_update)
 
     try:
         if current_user_id is None:
@@ -126,9 +117,6 @@ async def events_similar_to_this_event(
     current_event_id: int = Query(..., description="Event ID of the selected event"),
     max_recommendations: Optional[int] = Query(2, description="Number of recommendations required")):
 
-    importlib.reload(recommender)
-    importlib.reload(sch_update)
-
     try:
         if current_event_id is None:
             raise HTTPException(status_code=400, detail="Missing 'current_event_id' in request parameters.")
@@ -160,9 +148,6 @@ async def events_similar_to_this_event(
 async def other_users_also_liked(
     current_event_id: int = Query(..., description="Event ID of the selected event"),
     max_recommendations: Optional[int] = Query(2, description="Number of recommendations required")):
-
-    importlib.reload(recommender)
-    importlib.reload(sch_update)
 
     try:
         if current_event_id is None:
@@ -200,8 +185,6 @@ async def update_similarity_config(
     org: Optional[float] = Query(2.5, description="Weight of organizer in similarity calculation"),
     dat: Optional[float] = Query(7.5, description="Weight of date in similarity calculation"),
     tim: Optional[float] = Query(7.5, description="Weight of time in similarity calculation")):
-
-    importlib.reload(sch_update)
 
     try:
         sch_update.customize_content_similarity_matrix(

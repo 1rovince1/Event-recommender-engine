@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 import streamlit as st
 
-from pages import links
+import links
 
 # setting the stremlit app's layout to a wider view
 st.set_page_config(layout='wide')

@@ -11,7 +11,6 @@ from sklearn.metrics.pairwise import linear_kernel, cosine_similarity
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 
-# from engines import similarity_weights as wconfig
 
 # Download stopwords and other necessary corpora if you haven't done so (For first time use. Run the nltk_downloader.py file in the terminal to perform this action)
 # nltk.download('stopwords')  
@@ -22,7 +21,7 @@ from nltk.corpus import stopwords
 # API urls to be used
 events_data_url = 'http://127.0.0.1:5000/event_data'  # API from local server (inside the api_request_test_folder), for events' data
 users_data_url = 'http://127.0.0.1:5000/user_data'  # API from local server (inside the api_request_test_folder), for order history data
-# server_url = 'https://53ba-157-119-213-251.ngrok-free.app'  # remote server url
+# server_url = 'https://b9a4-157-119-213-251.ngrok-free.app'  # remote server url
 # events_data_url = server_url + '/api/bm/events?pageNumber=1&pageSize=10000' # remote server endpoint to obtain the data of all events (currently does not allow data of events more than the pagesize)
 # events_data_url = 'https://310e-117-243-214-166.ngrok-free.app/api/em/event?Page=1&Size=100' # data from event module
 # users_data_url = server_url + '/api/bm/GetOrderUser'  # remote server url to obtain the data of order history
@@ -300,13 +299,13 @@ def time_similarity():
 # for eg, if user wants 'food' events with price of around '500', we can comine the description and price similarities (w.r.t user-entered values) separately for this purpose,
 # and either assign the weights to other criterias (if we want other criterias to weigh-in by default) based on some calculation, or leave them out completely
 def update_content_recommendation_matrix(
-        weight_title_description_of_event = 55.0,
-        weight_price_of_event = 5.0,
-        weight_duration_of_event = 2.5,
-        weight_venue_of_event = 20.0,
-        weight_organizer_of_event = 2.5,
-        weight_date_of_event = 7.5,
-        weight_time_of_event = 7.5
+        weight_title_description_of_event,
+        weight_price_of_event,
+        weight_duration_of_event,
+        weight_venue_of_event,
+        weight_organizer_of_event,
+        weight_date_of_event,
+        weight_time_of_event
 ):
 
     #calculation of new similarity matrix
@@ -337,28 +336,6 @@ def update_content_recommendation_matrix(
     weight_organizer = weight_organizer_of_event / total_weight
     weight_date = weight_date_of_event / total_weight
     weight_time = weight_time_of_event / total_weight
-
-
-    # we would also need to uncomment the code line impotring wconfig (similarity_weights) file, with also moving that file inside the engines directory
-    # to make the below code work
-
-    # total_weight = (
-    #     wconfig.weight_title_description_of_event +
-    #     wconfig.weight_price_of_event +
-    #     wconfig.weight_duration_of_event +
-    #     wconfig.weight_venue_of_event +
-    #     wconfig.weight_organizer_of_event +
-    #     wconfig.weight_date_of_event +
-    #     wconfig.weight_time_of_event
-    # )
-
-    # weight_desc = wconfig.weight_title_description_of_event / total_weight
-    # weight_price = wconfig.weight_price_of_event / total_weight
-    # weight_duration = wconfig.weight_duration_of_event / total_weight
-    # weight_venue = wconfig.weight_venue_of_event / total_weight
-    # weight_organizer = wconfig.weight_organizer_of_event / total_weight
-    # weight_date = wconfig.weight_date_of_event / total_weight
-    # weight_time = wconfig.weight_time_of_event / total_weight
     # we have separated date and time similarity to allow the flexibility to assign different weightage to these attributes
     # in future these weights can be assigned dynamically based on users' preferences about certain criterias (like price etc.)
     # (currently they are set in the config file)
