@@ -55,10 +55,10 @@ card_html = '''
             width: 250px;
             height: 300px;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.1s, box-shadow 0.2s;
         }}
         .card:hover {{
-            transform: scale(1.05);
+            transform: scale(1.01);
             box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
         }}
         .date {{

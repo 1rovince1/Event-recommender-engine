@@ -2,6 +2,8 @@ import streamlit as st
 import requests
 import pandas as pd
 
+import links
+
 st.set_page_config(layout='wide')
 
 # setting a html for cards
@@ -40,10 +42,10 @@ card_html = '''
             width: 250px;
             height: 300px;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.1s, box-shadow 0.2s;
         }}
         .card:hover {{
-            transform: scale(1.05);
+            transform: scale(1.01);
             box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
         }}
         .date {{
@@ -95,8 +97,8 @@ def show_event_details(event_id):
 
 st.header('All Events')
 
-server_url = 'http://127.0.0.1:5000'
-events_endpoint = server_url + '/event_data'
+
+events_endpoint = links.server_url
 
 response = requests.get(events_endpoint)
 
