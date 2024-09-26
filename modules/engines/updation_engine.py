@@ -11,6 +11,8 @@ from sklearn.metrics.pairwise import linear_kernel, cosine_similarity
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 
+from engines import similarity_weights as wconfig
+
 # Download stopwords and other necessary corpora if you haven't done so (For first time use. Run the nltk_downloader.py file in the terminal to perform this action)
 # nltk.download('stopwords')  
 # nltk.download('wordnet')  # For lemmatizer
@@ -18,11 +20,11 @@ from nltk.corpus import stopwords
 
 
 # API urls to be used
-# events_data_url = 'http://127.0.0.1:5000/event_data'  # API from local server (inside the api_request_test_folder), for events' data
+events_data_url = 'http://127.0.0.1:5000/event_data'  # API from local server (inside the api_request_test_folder), for events' data
 users_data_url = 'http://127.0.0.1:5000/user_data'  # API from local server (inside the api_request_test_folder), for order history data
 # server_url = 'https://53ba-157-119-213-251.ngrok-free.app'  # remote server url
 # events_data_url = server_url + '/api/bm/events?pageNumber=1&pageSize=10000' # remote server endpoint to obtain the data of all events (currently does not allow data of events more than the pagesize)
-events_data_url = 'https://310e-117-243-214-166.ngrok-free.app/api/em/event?Page=1&Size=100' # data from event module
+# events_data_url = 'https://310e-117-243-214-166.ngrok-free.app/api/em/event?Page=1&Size=100' # data from event module
 # users_data_url = server_url + '/api/bm/GetOrderUser'  # remote server url to obtain the data of order history
 
 
@@ -77,11 +79,11 @@ def update_event_df():
         error_message = "error: " + str(response.status_code)
         return error_message
 
-    df = json_normalize(json_obj['data']).rename(columns={'base_price': 'price','organizer_id': 'organizerId', 'start_date_time': 'startDateTime', 'end_date_time': 'endDateTime', 'venue.city_id': 'venue.cityId', 'venue.state_id': 'venue.stateId', 'venue.country_id': 'venue.country' })    
-    # df = json_normalize(json_obj['data']) # converting the complex json data format to a simpler tabular format
+    # df = json_normalize(json_obj['data']).rename(columns={'base_price': 'price','organizer_id': 'organizerId', 'start_date_time': 'startDateTime', 'end_date_time': 'endDateTime', 'venue.city_id': 'venue.cityId', 'venue.state_id': 'venue.stateId', 'venue.country_id': 'venue.country' })    
+    df = json_normalize(json_obj['data']) # converting the complex json data format to a simpler tabular format
     event_df = df[['id', 'title', 'description', 'price', 'status', 'organizerId', 'startDateTime', 'endDateTime', 'venue.cityId', 'venue.stateId', 'venue.country']].copy()
     event_df = event_df.dropna() # removing any event that has these values as null (not possible, but kept to avoid unwanted errors)
-    event_df = event_df[event_df['status'] == "Published"]
+    # event_df = event_df[event_df['status'] == "Published"]
 
     # editing df
     event_df['CombinedDescription'] = ((event_df['title'] + ' ') + event_df['description']).apply(lambda x: clean(x))    # CombinedDescription column holds the title and description words (preprocessed using clean function)
@@ -91,7 +93,7 @@ def update_event_df():
     event_df['endDateTime'] = pd.to_datetime(event_df['endDateTime'])
     event_df['Duration'] = (event_df['endDateTime'] - event_df['startDateTime']).dt.total_seconds() / 3600  # Duration column hold the length of the event
 
-    current_utc_datetime = pd.to_datetime('now', utc=True)
+    current_utc_datetime = pd.to_datetime('now')
     event_df['Upcoming'] = (event_df['startDateTime'] - current_utc_datetime)  # Upcoming column hold the time duration which is left before the startDateTime of event arrives
     
     # creating and saving a list of the events that can be recommended (only the events in the future are saved in this list)
@@ -288,13 +290,32 @@ def update_content_recommendation_matrix():
     time_similarity_matrix = time_similarity()
     # these different types of similarities can also be used separately in future
 
-    weight_desc = 0.55  # weighted over half (for now) so that even the combined weight of other attributes does not override the description similarity
-    weight_price = 0.05
-    weight_duration = 0.025
-    weight_venue = 0.2
-    weight_organizer = 0.025
-    weight_date = 0.075
-    weight_time = 0.075  # we have separated date and time similarity to allow the flexibility to assign different weightage to these attributes
+    # configurable weights
+    total_weight = (
+        wconfig.weight_title_description_of_event +
+        wconfig.weight_price_of_event +
+        wconfig.weight_duration_of_event +
+        wconfig.weight_venue_of_event +
+        wconfig.weight_organizer_of_event +
+        wconfig.weight_date_of_event +
+        wconfig.weight_time_of_event
+    )
+
+    weight_desc = wconfig.weight_title_description_of_event / total_weight
+    weight_price = wconfig.weight_price_of_event / total_weight
+    weight_duration = wconfig.weight_duration_of_event / total_weight
+    weight_venue = wconfig.weight_venue_of_event / total_weight
+    weight_organizer = wconfig.weight_organizer_of_event / total_weight
+    weight_date = wconfig.weight_date_of_event / total_weight
+    weight_time = wconfig.weight_time_of_event / total_weight
+
+    # weight_desc = 0.55  # weighted over half (for now) so that even the combined weight of other attributes does not override the description similarity
+    # weight_price = 0.05
+    # weight_duration = 0.025
+    # weight_venue = 0.2
+    # weight_organizer = 0.025
+    # weight_date = 0.075
+    # weight_time = 0.075  # we have separated date and time similarity to allow the flexibility to assign different weightage to these attributes
     # in future these weights can be assigned dynamically based on users' preferences about certain criterias (like price etc.)
     # the attributes that the user selects/enters can be used to change these weights dynamically so that the recommendations are more personalised
 
