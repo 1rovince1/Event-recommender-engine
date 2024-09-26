@@ -44,6 +44,42 @@ def update_events_list():
 
 
 # function to update the content similarity matrix
+def retrieve_event_data():
+
+    try:
+
+        event_data_retrieval_and_processing_start_time = time.time()
+        updater.update_event_df()  # updating the events data
+        event_data_retrieval_and_processing_end_time = time.time()
+        print(f'Event data retrieved and processed successfully! ({(event_data_retrieval_and_processing_end_time - event_data_retrieval_and_processing_start_time):.6f} seconds)')
+
+    except Exception as e:
+
+        event_data_retrieval_and_processing_end_time = time.time()
+        print(f'Failed to retrieve and process event data: {str(e)} ({(event_data_retrieval_and_processing_end_time - event_data_retrieval_and_processing_start_time):.6f} seconds)')
+
+
+
+
+# function to update the content similarity matrix
+def retrieve_user_order_data():
+
+    try:
+
+        user_order_data_retrieval_and_processing_start_time = time.time()
+        updater.update_user_order_df()  # updating the user-order history data
+        user_order_data_retrieval_and_processing_end_time = time.time()
+        print(f'User-order history data retrieved successfully! ({(user_order_data_retrieval_and_processing_end_time - user_order_data_retrieval_and_processing_start_time):.6f} seconds)')
+
+    except Exception as e:
+
+        user_order_data_retrieval_and_processing_end_time = time.time()
+        print(f'Failed to retrieve user-order history data: {str(e)} ({(user_order_data_retrieval_and_processing_end_time - user_order_data_retrieval_and_processing_start_time):.6f} seconds)')
+
+
+
+
+# function to update the content similarity matrix
 def update_content_similarity_matrix():
 
     try:
@@ -105,6 +141,8 @@ def periodic_update():
 
     print('Updating recommendation matrices and files...')
 
+    retrieve_event_data()
+    retrieve_user_order_data()
     update_content_similarity_matrix()
     update_user_item_matrix()
     update_events_info_list()

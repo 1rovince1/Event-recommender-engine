@@ -20,10 +20,10 @@ from engines import similarity_weights as wconfig
 
 
 # API urls to be used
-# events_data_url = 'http://127.0.0.1:5000/event_data'  # API from local server (inside the api_request_test_folder), for events' data
+events_data_url = 'http://127.0.0.1:5000/event_data'  # API from local server (inside the api_request_test_folder), for events' data
 users_data_url = 'http://127.0.0.1:5000/user_data'  # API from local server (inside the api_request_test_folder), for order history data
-server_url = 'https://53ba-157-119-213-251.ngrok-free.app'  # remote server url
-events_data_url = server_url + '/api/bm/events?pageNumber=1&pageSize=10000' # remote server endpoint to obtain the data of all events (currently does not allow data of events more than the pagesize)
+# server_url = 'https://53ba-157-119-213-251.ngrok-free.app'  # remote server url
+# events_data_url = server_url + '/api/bm/events?pageNumber=1&pageSize=10000' # remote server endpoint to obtain the data of all events (currently does not allow data of events more than the pagesize)
 # events_data_url = 'https://310e-117-243-214-166.ngrok-free.app/api/em/event?Page=1&Size=100' # data from event module
 # users_data_url = server_url + '/api/bm/GetOrderUser'  # remote server url to obtain the data of order history
 
@@ -43,6 +43,7 @@ retrieved_combined_content_similarity_df = None # dataframe format of the combin
 retrieved_item_similarity_df = None # dataframe format of the combined item-similarity matrix
 retrieved_user_item_matrix_df = None    # dataframe format of the user-item matrix
 retrieved_event_df = None   # dataframe that holds the data of all the events
+retrieved_user_order_df = None    # dataframe that holds the data of past orders
 retrieved_recommendable_events_list = None # a list that holds the event ids of the events that can be recommended
 recommendable_events_info_list = None   # a list containing all the event data in the json respose format for each event
 
@@ -83,8 +84,8 @@ def update_event_df():
     df = json_normalize(json_obj['data']) # converting the complex json data format to a simpler tabular format
     event_df = df[['id', 'title', 'description', 'price', 'status', 'organizerId', 'startDateTime', 'endDateTime', 'venue.cityId', 'venue.stateId', 'venue.country']].copy()
     event_df = event_df.dropna() # removing any event that has these values as null (not possible, but kept to avoid unwanted errors)
-    event_df = event_df[event_df['status'] == "Published"]
-    # event_df = event_df[event_df['status'] == 1]
+    # event_df = event_df[event_df['status'] == "Published"]
+    event_df = event_df[event_df['status'] == 1]
 
     # editing df
     event_df['CombinedDescription'] = ((event_df['title'] + ' ') + event_df['description']).apply(lambda x: clean(x))    # CombinedDescription column holds the title and description words (preprocessed using clean function)
@@ -94,8 +95,8 @@ def update_event_df():
     event_df['endDateTime'] = pd.to_datetime(event_df['endDateTime'])
     event_df['Duration'] = (event_df['endDateTime'] - event_df['startDateTime']).dt.total_seconds() / 3600  # Duration column hold the length of the event
 
-    current_utc_datetime = pd.to_datetime('now', utc=True)
-    # current_utc_datetime = pd.to_datetime('now')
+    # current_utc_datetime = pd.to_datetime('now', utc=True)
+    current_utc_datetime = pd.to_datetime('now')
     event_df['Upcoming'] = (event_df['startDateTime'] - current_utc_datetime)  # Upcoming column hold the time duration which is left before the startDateTime of event arrives
     
     # creating and saving a list of the events that can be recommended (only the events in the future are saved in this list)
@@ -115,6 +116,27 @@ def update_event_df():
 
         global recommendable_events_info_list
         recommendable_events_info_list = recommendable_json_obj
+
+
+
+
+# function to update the in-memory dataframe holding the data of past orders
+def update_user_order_df():
+
+    # getting response from the past order details of users
+    response = requests.get(users_data_url)
+    if response.status_code == 200:
+        user_json_obj = response.json()
+    else:
+        error_message = "error: " + str(response.status_code)
+        return error_message
+    
+    user_order_df = pd.DataFrame(user_json_obj)
+
+    with update_lock:
+
+        global retrieved_user_order_df
+        retrieved_user_order_df = user_order_df
 
 
 
@@ -279,9 +301,6 @@ def time_similarity():
 # and either assign the weights to other criterias (if we want other criterias to weigh-in by default) based on some calculation, or leave them out completely
 def update_content_recommendation_matrix():
 
-    # first updating the dataframe holding the events
-    update_event_df()
-
     #calculation of new similarity matrix
     title_desc_similarity_matrix = title_desc_similarity()
     price_similarity_matrix = price_similarity()
@@ -310,15 +329,9 @@ def update_content_recommendation_matrix():
     weight_organizer = wconfig.weight_organizer_of_event / total_weight
     weight_date = wconfig.weight_date_of_event / total_weight
     weight_time = wconfig.weight_time_of_event / total_weight
-
-    # weight_desc = 0.55  # weighted over half (for now) so that even the combined weight of other attributes does not override the description similarity
-    # weight_price = 0.05
-    # weight_duration = 0.025
-    # weight_venue = 0.2
-    # weight_organizer = 0.025
-    # weight_date = 0.075
-    # weight_time = 0.075  # we have separated date and time similarity to allow the flexibility to assign different weightage to these attributes
+    # we have separated date and time similarity to allow the flexibility to assign different weightage to these attributes
     # in future these weights can be assigned dynamically based on users' preferences about certain criterias (like price etc.)
+    # (currently they are set in the config file)
     # the attributes that the user selects/enters can be used to change these weights dynamically so that the recommendations are more personalised
 
     combined_content_similarity_matrix = (
@@ -350,17 +363,7 @@ def update_content_recommendation_matrix():
 # function to create a new user-item matrix using order history (GetOrderUser) api response
 def update_user_item_matrix():
 
-    # getting response from the past order details of users
-    response = requests.get(users_data_url)
-    if response.status_code == 200:
-        user_json_obj = response.json()
-    else:
-        error_message = "error: " + str(response.status_code)
-        return error_message
-
-    # creation of the user-item matrix
-    user_df = pd.DataFrame(user_json_obj)
-    user_item_matrix = pd.pivot_table(user_df, index='userId', columns='eventId', aggfunc='size', fill_value=0)
+    user_item_matrix = pd.pivot_table(retrieved_user_order_df, index='userId', columns='eventId', aggfunc='size', fill_value=0)
 
     # here we are converting every user-item interaction to 0 or 1 (binary) to prevent skewness/bias
     # this also allows us to get similarity of events based on the different users that interact with it, without taking into account the number of tickets one user books
