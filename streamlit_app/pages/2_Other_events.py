@@ -129,7 +129,7 @@ if response.status_code == 200:
           date_dict[event_id] = event_date
 
 else:
-    print('Error. Couldn\'t load.')
+    st.write('Error. Couldn\'t load.')
 
 
 selection = st.selectbox('Select event: ',

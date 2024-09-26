@@ -11,7 +11,7 @@ from sklearn.metrics.pairwise import linear_kernel, cosine_similarity
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 
-from engines import similarity_weights as wconfig
+# from engines import similarity_weights as wconfig
 
 # Download stopwords and other necessary corpora if you haven't done so (For first time use. Run the nltk_downloader.py file in the terminal to perform this action)
 # nltk.download('stopwords')  
@@ -299,7 +299,15 @@ def time_similarity():
 # for this purpose, we can either use the separate matrices for separate use-cases, and combine the results as per requirements
 # for eg, if user wants 'food' events with price of around '500', we can comine the description and price similarities (w.r.t user-entered values) separately for this purpose,
 # and either assign the weights to other criterias (if we want other criterias to weigh-in by default) based on some calculation, or leave them out completely
-def update_content_recommendation_matrix():
+def update_content_recommendation_matrix(
+        weight_title_description_of_event = 55.0,
+        weight_price_of_event = 5.0,
+        weight_duration_of_event = 2.5,
+        weight_venue_of_event = 20.0,
+        weight_organizer_of_event = 2.5,
+        weight_date_of_event = 7.5,
+        weight_time_of_event = 7.5
+):
 
     #calculation of new similarity matrix
     title_desc_similarity_matrix = title_desc_similarity()
@@ -313,22 +321,44 @@ def update_content_recommendation_matrix():
 
     # configurable weights
     total_weight = (
-        wconfig.weight_title_description_of_event +
-        wconfig.weight_price_of_event +
-        wconfig.weight_duration_of_event +
-        wconfig.weight_venue_of_event +
-        wconfig.weight_organizer_of_event +
-        wconfig.weight_date_of_event +
-        wconfig.weight_time_of_event
+        weight_title_description_of_event +
+        weight_price_of_event +
+        weight_duration_of_event +
+        weight_venue_of_event +
+        weight_organizer_of_event +
+        weight_date_of_event +
+        weight_time_of_event
     )
 
-    weight_desc = wconfig.weight_title_description_of_event / total_weight
-    weight_price = wconfig.weight_price_of_event / total_weight
-    weight_duration = wconfig.weight_duration_of_event / total_weight
-    weight_venue = wconfig.weight_venue_of_event / total_weight
-    weight_organizer = wconfig.weight_organizer_of_event / total_weight
-    weight_date = wconfig.weight_date_of_event / total_weight
-    weight_time = wconfig.weight_time_of_event / total_weight
+    weight_desc = weight_title_description_of_event / total_weight
+    weight_price = weight_price_of_event / total_weight
+    weight_duration = weight_duration_of_event / total_weight
+    weight_venue = weight_venue_of_event / total_weight
+    weight_organizer = weight_organizer_of_event / total_weight
+    weight_date = weight_date_of_event / total_weight
+    weight_time = weight_time_of_event / total_weight
+
+
+    # we would also need to uncomment the code line impotring wconfig (similarity_weights) file, with also moving that file inside the engines directory
+    # to make the below code work
+
+    # total_weight = (
+    #     wconfig.weight_title_description_of_event +
+    #     wconfig.weight_price_of_event +
+    #     wconfig.weight_duration_of_event +
+    #     wconfig.weight_venue_of_event +
+    #     wconfig.weight_organizer_of_event +
+    #     wconfig.weight_date_of_event +
+    #     wconfig.weight_time_of_event
+    # )
+
+    # weight_desc = wconfig.weight_title_description_of_event / total_weight
+    # weight_price = wconfig.weight_price_of_event / total_weight
+    # weight_duration = wconfig.weight_duration_of_event / total_weight
+    # weight_venue = wconfig.weight_venue_of_event / total_weight
+    # weight_organizer = wconfig.weight_organizer_of_event / total_weight
+    # weight_date = wconfig.weight_date_of_event / total_weight
+    # weight_time = wconfig.weight_time_of_event / total_weight
     # we have separated date and time similarity to allow the flexibility to assign different weightage to these attributes
     # in future these weights can be assigned dynamically based on users' preferences about certain criterias (like price etc.)
     # (currently they are set in the config file)

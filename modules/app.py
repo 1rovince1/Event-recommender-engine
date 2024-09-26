@@ -171,3 +171,39 @@ async def other_users_also_liked(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An internal error occured: {str(e)}")
 
+
+
+
+
+# api endpoint to trigger update in similarity calculation
+@app.get("/api/bm/recommendations/update_similarity", response_model=Dict[str,Any])
+async def update_similarity_config(
+    tit_des: Optional[float] = Query(55.0, description="Weight of title-description in similarity calculation"),
+    pr: Optional[float] = Query(5.0, description="Weight of price in similarity calculation"),
+    dur: Optional[float] = Query(2.5, description="Weight of duration in similarity calculation"),
+    ven: Optional[float] = Query(20.0, description="Weight of venue in similarity calculation"),
+    org: Optional[float] = Query(2.5, description="Weight of organizer in similarity calculation"),
+    dat: Optional[float] = Query(7.5, description="Weight of date in similarity calculation"),
+    tim: Optional[float] = Query(7.5, description="Weight of time in similarity calculation")):
+
+    try:
+        sch_update.customize_content_similarity_matrix(
+            tit_des,
+            pr,
+            dur,
+            ven,
+            org,
+            dat,
+            tim
+        )
+
+        # creating the response body
+        response_content = {
+            "status" : "success",
+            "message" : "customized configurations!"
+        }
+
+        return response_content
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An internal error occured: {str(e)}")
