@@ -58,16 +58,23 @@ async def popular_events(
 
     try:
         # calling the recommendation logic
-        recommended_event_ids = recommender.popular_events()
+        recommendation_response = recommender.popular_events()
 
-        # getting the events info in the required response format from the events_list
-        recommended_events = [sch_update.events_list[sch_update.indices[i]] for i in recommended_event_ids]
+        if recommendation_response["data"] is not None:
+            recommended_event_ids = recommendation_response["data"][:max_recommendations]
+
+            # getting the events info in the required response format from the events_list
+            recommended_events = [sch_update.events_list[sch_update.indices[i]] for i in recommended_event_ids]
+
+        else:
+            recommended_events = None
 
         # creating the response body
         response_content = {
             "status" : "success",
             "message" : "Popular events",
-            "data" : recommended_events[:max_recommendations]
+            "label" : recommendation_response["label"],
+            "data" : recommended_events
         }
 
         return response_content
@@ -90,16 +97,23 @@ async def personal_recommendations_for_user(
             raise HTTPException(status_code=400, detail="Missing 'current_user_id' in request parameters.")
 
         # calling the recommendation logic
-        recommended_event_ids = recommender.collaborative_item_based_recommendations(current_user_id)
+        recommendation_response = recommender.collaborative_item_based_recommendations(current_user_id)
 
-        # getting the events info in the required response format from the events_list
-        recommended_events = [sch_update.events_list[sch_update.indices[i]] for i in recommended_event_ids]
+        if recommendation_response["data"] is not None:
+            recommended_event_ids = recommendation_response["data"][:max_recommendations]
+
+            # getting the events info in the required response format from the events_list
+            recommended_events = [sch_update.events_list[sch_update.indices[i]] for i in recommended_event_ids]
+
+        else:
+            recommended_events = None
 
         # creating the response body
         response_content = {
             "status" : "success",
             "message" : "Events recommended for the user",
-            "data" : recommended_events[:max_recommendations]
+            "label" : recommendation_response["label"],
+            "data" : recommended_events
         }
 
         return response_content
@@ -122,16 +136,23 @@ async def events_similar_to_this_event(
             raise HTTPException(status_code=400, detail="Missing 'current_event_id' in request parameters.")
 
         # calling the recommendation logic
-        recommended_event_ids = recommender.content_based_recommendations(current_event_id)
+        recommendation_response = recommender.content_based_recommendations(current_event_id)
 
-        # getting the events info in the required response format from the events_list
-        recommended_events = [sch_update.events_list[sch_update.indices[i]] for i in recommended_event_ids]
+        if recommendation_response["data"] is not None:
+            recommended_event_ids = recommendation_response["data"][:max_recommendations]
+
+            # getting the events info in the required response format from the events_list
+            recommended_events = [sch_update.events_list[sch_update.indices[i]] for i in recommended_event_ids]
+
+        else:
+            recommended_events = None
 
         # creating the response body
         response_content = {
             "status" : "success",
             "message" : "Similar events",
-            "data" : recommended_events[:max_recommendations]
+            "label" : recommendation_response["label"],
+            "data" : recommended_events
         }
 
         return response_content
@@ -154,16 +175,23 @@ async def other_users_also_liked(
             raise HTTPException(status_code=400, detail="Missing 'current_event_id' in request parameters.")
 
         # calling the recommendation logic
-        recommended_event_ids = recommender.users_also_liked(current_event_id)
+        recommendation_response = recommender.users_also_liked(current_event_id)
 
-        # getting the events info in the required response format from the events_list
-        recommended_events = [sch_update.events_list[sch_update.indices[i]] for i in recommended_event_ids]
+        if recommendation_response["data"] is not None:
+            recommended_event_ids = recommendation_response["data"][:max_recommendations]
+
+            # getting the events info in the required response format from the events_list
+            recommended_events = [sch_update.events_list[sch_update.indices[i]] for i in recommended_event_ids]
+
+        else:
+            recommended_events = None
 
         # creating the response body
         response_content = {
             "status" : "success",
             "message" : "Users-also-liked events",
-            "data" : recommended_events[:max_recommendations]
+            "label" : recommendation_response["label"],
+            "data" : recommended_events
         }
 
         return response_content
@@ -183,6 +211,7 @@ async def update_similarity_config(
     dur: Optional[float] = Query(2.5, description="Weight of duration in similarity calculation"),
     ven: Optional[float] = Query(20.0, description="Weight of venue in similarity calculation"),
     org: Optional[float] = Query(2.5, description="Weight of organizer in similarity calculation"),
+    perf: Optional[float] = Query(2.5, description="Weight of performer in similarity calculation"),
     dat: Optional[float] = Query(7.5, description="Weight of date in similarity calculation"),
     tim: Optional[float] = Query(7.5, description="Weight of time in similarity calculation")):
 
@@ -193,6 +222,7 @@ async def update_similarity_config(
             dur,
             ven,
             org,
+            perf,
             dat,
             tim
         )

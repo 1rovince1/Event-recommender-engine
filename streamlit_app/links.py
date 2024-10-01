@@ -1,10 +1,10 @@
 #local
-server_url = 'http://127.0.0.1:5000/event_data'
+# server_url = 'http://127.0.0.1:5000/event_data'
 
 
 
 #bm
-# server_url = 'https://b9a4-157-119-213-251.ngrok-free.app/api/bm/events?pageNumber=1&pageSize=10000'  # remote server url
+server_url = 'https://dcec-157-119-213-251.ngrok-free.app/api/bm/events?pageNumber=1&pageSize=10000'  # remote server url
 
 
 

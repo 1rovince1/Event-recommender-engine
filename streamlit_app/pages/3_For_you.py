@@ -76,7 +76,7 @@ card_html = '''
     </div>
 '''
 
-st.title('Personal recommendations') 
+
 
 
 # converting the json data received to cards
@@ -111,19 +111,28 @@ def display_as_cards(cards):
 
 
 
-user_id = st.text_input('Enter user id: ', value = 0)
+user_id = st.text_input('Enter user id: ', value = 0, placeholder = 0)
 max_recommendations = st.text_input('Enter the maximum number of recommendations:', value=6)
 
-personal_recommendations_endpoint = personal_recommendations_endpoint.format(current_user_id = user_id, max_recommendations = max_recommendations)
-response = requests.get(personal_recommendations_endpoint)
-
-if response.status_code == 200:
-
-        data = response.json()
-        events = data['data']
-        cards = convert_json_to_cards(events)
-        display_as_cards(cards)
+if user_id is None:
+    st.title('New user (Not logged in)')
 
 else:
 
-        st.write('Error. Couldn\'t load')
+    personal_recommendations_endpoint = personal_recommendations_endpoint.format(current_user_id = user_id, max_recommendations = max_recommendations)
+    response = requests.get(personal_recommendations_endpoint)
+
+    if response.status_code == 200:
+
+            data = response.json()
+            events = data['data']
+            if events is None:
+                st.title("No recommedations available yet")
+            else:
+                st.title(data['label'])
+                cards = convert_json_to_cards(events)
+                display_as_cards(cards)
+
+    else:
+
+            st.write('Error. Couldn\'t load')

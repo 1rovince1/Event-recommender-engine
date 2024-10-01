@@ -148,7 +148,7 @@ else:
 max_recommendations = 3
 
 
-st.header('Similar events:')
+
 
 other_similar_events_endpoint = other_similar_events_endpoint.format(current_event_id = event_id, max_recommendations = max_recommendations)
 response = requests.get(other_similar_events_endpoint)
@@ -157,8 +157,12 @@ if response.status_code == 200:
 
         data = response.json()
         events = data['data']
-        cards = convert_json_to_cards(events)
-        display_as_cards(cards)
+        if events is None:
+            st.header("No similar events available yet")
+        else:
+            st.header(data['label'])
+            cards = convert_json_to_cards(events)
+            display_as_cards(cards)
 
 else:
 
@@ -167,7 +171,7 @@ else:
 
 
 
-st.header('Other users also liked:')
+
 
 events_also_liked_by_ohter_users_endpoint = events_also_liked_by_ohter_users_endpoint.format(current_event_id = event_id, max_recommendations = max_recommendations)
 response = requests.get(events_also_liked_by_ohter_users_endpoint)
@@ -176,8 +180,12 @@ if response.status_code == 200:
 
         data = response.json()
         events = data['data']
-        cards = convert_json_to_cards(events)
-        display_as_cards(cards)
+        if events is None:
+            st.header("No users-also-liked data available")
+        else:
+            st.header(data['label'])
+            cards = convert_json_to_cards(events)
+            display_as_cards(cards)
 
 else:
 

@@ -19,12 +19,12 @@ from nltk.corpus import stopwords
 
 
 # API urls to be used
-events_data_url = 'http://127.0.0.1:5000/event_data'  # API from local server (inside the api_request_test_folder), for events' data
-users_data_url = 'http://127.0.0.1:5000/user_data'  # API from local server (inside the api_request_test_folder), for order history data
-# server_url = 'https://b9a4-157-119-213-251.ngrok-free.app'  # remote server url
-# events_data_url = server_url + '/api/bm/events?pageNumber=1&pageSize=10000' # remote server endpoint to obtain the data of all events (currently does not allow data of events more than the pagesize)
+# events_data_url = 'http://127.0.0.1:5000/event_data'  # API from local server (inside the api_request_test_folder), for events' data
+# users_data_url = 'http://127.0.0.1:5000/user_data'  # API from local server (inside the api_request_test_folder), for order history data
+server_url = 'https://dcec-157-119-213-251.ngrok-free.app'  # remote server url
+events_data_url = server_url + '/api/bm/events' # remote server endpoint to obtain the data of all events (currently does not allow data of events more than the pagesize)
+users_data_url = server_url + '/api/bm/get-order-user'  # remote server url to obtain the data of order history
 # events_data_url = 'https://310e-117-243-214-166.ngrok-free.app/api/em/event?Page=1&Size=100' # data from event module
-# users_data_url = server_url + '/api/bm/GetOrderUser'  # remote server url to obtain the data of order history
 
 
 # creating a thread lock mechanism to protect files while they are being updated
@@ -79,12 +79,12 @@ def update_event_df():
         error_message = "error: " + str(response.status_code)
         return error_message
 
-    # df = json_normalize(json_obj['data']).rename(columns={'base_price': 'price','organizer_id': 'organizerId', 'start_date_time': 'startDateTime', 'end_date_time': 'endDateTime', 'venue.city_id': 'venue.cityId', 'venue.state_id': 'venue.stateId', 'venue.country_id': 'venue.country' })    
+    # df = json_normalize(json_obj['data']).rename(columns={'base_price': 'price','organizer_id': 'organizerId', 'performer_id': 'performerId', 'start_date_time': 'startDateTime', 'end_date_time': 'endDateTime', 'venue.city_id': 'venue.cityId', 'venue.state_id': 'venue.stateId', 'venue.country_id': 'venue.country' })    
     df = json_normalize(json_obj['data']) # converting the complex json data format to a simpler tabular format
-    event_df = df[['id', 'title', 'description', 'price', 'status', 'organizerId', 'startDateTime', 'endDateTime', 'venue.cityId', 'venue.stateId', 'venue.country']].copy()
+    event_df = df[['id', 'title', 'description', 'price', 'status', 'organizerId', 'performerId', 'startDateTime', 'endDateTime', 'venue.cityId', 'venue.stateId', 'venue.country']].copy()
     event_df = event_df.dropna() # removing any event that has these values as null (not possible, but kept to avoid unwanted errors)
-    # event_df = event_df[event_df['status'] == "Published"]
-    event_df = event_df[event_df['status'] == 1]
+    event_df = event_df[event_df['status'] == "Published"]
+    # event_df = event_df[event_df['status'] == 1]
 
     # editing df
     event_df['CombinedDescription'] = ((event_df['title'] + ' ') + event_df['description']).apply(lambda x: clean(x))    # CombinedDescription column holds the title and description words (preprocessed using clean function)
@@ -94,8 +94,8 @@ def update_event_df():
     event_df['endDateTime'] = pd.to_datetime(event_df['endDateTime'])
     event_df['Duration'] = (event_df['endDateTime'] - event_df['startDateTime']).dt.total_seconds() / 3600  # Duration column hold the length of the event
 
-    # current_utc_datetime = pd.to_datetime('now', utc=True)
-    current_utc_datetime = pd.to_datetime('now')
+    current_utc_datetime = pd.to_datetime('now', utc=True)
+    # current_utc_datetime = pd.to_datetime('now')
     event_df['Upcoming'] = (event_df['startDateTime'] - current_utc_datetime)  # Upcoming column hold the time duration which is left before the startDateTime of event arrives
     
     # creating and saving a list of the events that can be recommended (only the events in the future are saved in this list)
@@ -241,6 +241,20 @@ def organizer_similarity():
 
 
 
+# function to get performer similarity matrix (based on performerId)
+def performer_similarity():
+
+    ohenc = OneHotEncoder()
+
+    performer_encoded = ohenc.fit_transform(retrieved_event_df[['performerId']])    # encoding the organizer ids
+
+    performer_similarity_matrix = linear_kernel(performer_encoded)  # matrix representing similarity in organizer
+
+    return performer_similarity_matrix
+
+
+
+
 # function to get date similarity
 def date_similarity():
     
@@ -304,6 +318,7 @@ def update_content_recommendation_matrix(
         weight_duration_of_event,
         weight_venue_of_event,
         weight_organizer_of_event,
+        weight_performer_of_event,
         weight_date_of_event,
         weight_time_of_event
 ):
@@ -314,6 +329,7 @@ def update_content_recommendation_matrix(
     duration_similarity_matrix = duration_similarity()
     venue_similarity_matrix = venue_similarity()
     organizer_similarity_matrix = organizer_similarity()
+    performer_similarity_matrix = performer_similarity()
     date_similarity_matrix = date_similarity()
     time_similarity_matrix = time_similarity()
     # these different types of similarities can also be used separately in future
@@ -325,6 +341,7 @@ def update_content_recommendation_matrix(
         weight_duration_of_event +
         weight_venue_of_event +
         weight_organizer_of_event +
+        weight_performer_of_event +
         weight_date_of_event +
         weight_time_of_event
     )
@@ -334,6 +351,7 @@ def update_content_recommendation_matrix(
     weight_duration = weight_duration_of_event / total_weight
     weight_venue = weight_venue_of_event / total_weight
     weight_organizer = weight_organizer_of_event / total_weight
+    weight_performer = weight_performer_of_event / total_weight
     weight_date = weight_date_of_event / total_weight
     weight_time = weight_time_of_event / total_weight
     # we have separated date and time similarity to allow the flexibility to assign different weightage to these attributes
@@ -347,6 +365,7 @@ def update_content_recommendation_matrix(
         (weight_duration * duration_similarity_matrix) +
         (weight_venue * venue_similarity_matrix) +
         (weight_organizer * organizer_similarity_matrix) +
+        (weight_performer * performer_similarity_matrix) +
         (weight_date * date_similarity_matrix) +
         (weight_time * time_similarity_matrix)
     )

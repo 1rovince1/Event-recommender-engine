@@ -92,6 +92,7 @@ def update_content_similarity_matrix():
             wconfig.weight_duration_of_event,
             wconfig.weight_venue_of_event,
             wconfig.weight_organizer_of_event,
+            wconfig.weight_performer_of_event,
             wconfig.weight_date_of_event,
             wconfig.weight_time_of_event
         )  # updating the content recommendation matrix
@@ -182,6 +183,7 @@ def customize_content_similarity_matrix(
         weight_duration_of_event,
         weight_venue_of_event,
         weight_organizer_of_event,
+        weight_performer_of_event,
         weight_date_of_event,
         weight_time_of_event
 ):
@@ -195,6 +197,7 @@ def customize_content_similarity_matrix(
             weight_duration_of_event,
             weight_venue_of_event,
             weight_organizer_of_event,
+            weight_performer_of_event,
             weight_date_of_event,
             weight_time_of_event
         )  # updating the content recommendation matrix
@@ -209,17 +212,19 @@ def customize_content_similarity_matrix(
             f"weight_duration_of_event = {weight_duration_of_event}",
             f"weight_venue_of_event = {weight_venue_of_event}",
             f"weight_organizer_of_event = {weight_organizer_of_event}",
+            f"weight_performer_of_event = {weight_performer_of_event}",
             f"weight_date_of_event = {weight_date_of_event}",
             f"weight_time_of_event = {weight_time_of_event}",
 
 
             f"# default weights:",
 
-            f"# weight_title_description_of_event = 55.0",
+            f"# weight_title_description_of_event = 35.0",
             f"# weight_price_of_event = 5.0",
             f"# weight_duration_of_event = 2.5",
-            f"# weight_venue_of_event = 20.0",
+            f"# weight_venue_of_event = 15.0",
             f"# weight_organizer_of_event = 2.5",
+            f"# weight_performer_of_event = 25.0",
             f"# weight_date_of_event = 7.5",
             f"# weight_time_of_event = 7.5"
         ])

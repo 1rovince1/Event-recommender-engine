@@ -73,7 +73,7 @@ card_html = '''
     </div>
 '''
 
-st.title('Popular events')
+
 
 
 # converting the json data received to cards
@@ -116,8 +116,12 @@ if response.status_code == 200:
 
         data = response.json()
         events = data['data']
-        cards = convert_json_to_cards(events)
-        display_as_cards(cards)
+        if events is None:
+            st.title("No popular event")
+        else:
+            st.title(data['label'])
+            cards = convert_json_to_cards(events)
+            display_as_cards(cards)
 
 else:
         
